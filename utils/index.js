@@ -2,22 +2,22 @@
 const Datauri = require('datauri');
 const path = require('path');
 
-const cloudinary = require('../config/cloudinary');
+// const cloudinary = require('../config/cloudinary');
 const sgMail = require('@sendgrid/mail');
 
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
-function uploader(req) {
-    return new Promise((resolve, reject) => {
-        const dUri = new Datauri();
-        let image = dUri.format(path.extname(req.file.originalname).toString(), req.file.buffer);
+// function uploader(req) {
+//     return new Promise((resolve, reject) => {
+//         const dUri = new Datauri();
+//         let image = dUri.format(path.extname(req.file.originalname).toString(), req.file.buffer);
 
-        cloudinary.uploader.upload(image.content, (err, url) => {
-            if (err) return reject(err);
-            return resolve(url);
-        })
-    });
-}
+//         cloudinary.uploader.upload(image.content, (err, url) => {
+//             if (err) return reject(err);
+//             return resolve(url);
+//         })
+//     });
+// }
 
 function sendEmail(mailOptions) {
     return new Promise((resolve, reject) => {
@@ -28,4 +28,4 @@ function sendEmail(mailOptions) {
     });
 }
 
-module.exports = { uploader, sendEmail };
+module.exports = {sendEmail };

@@ -13,10 +13,10 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
-db.connect();
-app.use(passport.initialize());
-require("./middlewares/jwt")(passport);
+// db.connect();
+// app.use(passport.initialize());
+// require("./middlewares/jwt")(passport);
 
-require('./routes/index')(app);
+// require('./routes/index')(app);
 
 app.listen(PORT, () => console.log('Server running on http://localhost:'+PORT+'/'));
