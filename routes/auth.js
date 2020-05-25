@@ -57,6 +57,14 @@ router.post('/login',async  (req, res) =>{
 
     const token = jwt.sign({_id : userExist._id}, process.env.SECRET)
     res.header('auth-token', token).send("Success")
-})
+});
+
+router.post('/emailAuth/:auth', async (req, res) => {
+    const emailAuth = await User.findOneAndUpdate({hashAuthenticate : req.params.auth}, 
+                                                   {authenticated : true});
+    if (!emailAuth) return res.status(400).send("No such user found on system");
+
+    res.send(`Email ${emailAuth.email} has been authenticated !`);
+});
 
 module.exports = router;

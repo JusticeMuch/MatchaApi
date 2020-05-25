@@ -2,6 +2,7 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const cors = require("cors");
 const mongoose = require("mongoose");
+const authToken = require('./middleware/verifyToken')
 require('dotenv').config()
 
 const app = express();
