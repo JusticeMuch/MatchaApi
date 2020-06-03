@@ -31,7 +31,19 @@ app.use('/api/user', authRoute);
 app.get("/", (req, res) => {
   res.json({ message: "Welcome to Matcha API" });
 });
-const createUsersString = "create table if not exists users ( \id serial primary key, username text not null unique, email text not null unique, password text not null, authenticated bool default 'f');";
+
+const createUsersString = "create table if not exists users \
+                          (id serial primary key, username text not null unique,\
+                             email text not null unique, password text not null, \
+                             authenticated bool default 'f');";
+
+const createProfileString = "create table if not exists profiles \
+                            (id integer not null , firstName text not null, \
+                              lastName text not null, age integer not null, \
+                              bio text not null, images json, \
+                              tags text [] not null, latitude integer , \
+                              longitude integer, address text not null ,\
+                              primary key(id) , foreign key(id) references users (id));";
 
 
 mongoose
@@ -43,6 +55,10 @@ mongoose
   await pool.query(createUsersString).then((error, results) => {
     if (error) console.log(error);
     else console.log("Users table created");
+  });
+  await pool.query(createProfileString).then((error, results) => {
+    if (error) console.log(error);
+    else console.log("Profiles table created");
   });
   await console.log("Connected to the database!");
   await app.listen(PORT, () => {

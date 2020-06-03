@@ -3,6 +3,7 @@ const bcrypt = require('bcrypt');
 const crypto = require('crypto');
 const Token = require('../models/token');
 const sgMail = require('@sendgrid/mail');
+sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 const jwt = require('jsonwebtoken');
 const Pool = require('pg').Pool
 const pool = new Pool({
@@ -20,9 +21,13 @@ const schemaRegister = Joi.object({
 });
 
 const schemaLogin = Joi.object({
-    login : Joi.string().min(5).required(),
+    email : Joi.string().min(5).required().email(),
     password : Joi.string().min(6).required()
 });
+
+const schemaTokenEmail = Joi.object({
+    email : Joi.string().min(6).email().required()
+})
 
 const register = async (req,res) => {
     console.log('helpsdfsdfsdf');
@@ -49,7 +54,7 @@ const register = async (req,res) => {
                         from: 'no-reply@matcha.com',
                         to: email,
                         subject: 'Account Verification Token',
-                        text: `Hello,\n\n' + 'Please verify your account by clicking the link: \nhttp://localhost:5000/api/user/confirmation/${token.token}`
+                        text: `Hello,\n\n Please verify your account by clicking the link: \nhttp://localhost:5000/api/user/confirmation/${token.token}`
                       };
                       await sgMail.send(msg);
                       return await res.send({id : results.rows[0].id});
@@ -66,7 +71,7 @@ const login = async (req, res) =>{
 
     const {email, password} = req.body;
 
-    return await pool.query('SELECT * FROM users WHERE email = $1', [id], (error, results) => {
+    return await pool.query('SELECT * FROM users WHERE email = $1', [email], (error, results) => {
         if (error) {
           return res.status(400).send(error.message);
         }
@@ -77,12 +82,31 @@ const login = async (req, res) =>{
         else if (!bcrypt.compare(password , results.rows[0].password))
             return res.status(400).send({message : "Invalid password"});
         else{
-            const token = jwt.sign({_id : userExist._id}, process.env.SECRET)
+            const token = jwt.sign({_id : results.rows[0].id}, process.env.SECRET)
             res.header('auth-token', token).send("Success")
         }
 
     })
 }
+
+// const resetPassword = async (req, res) => {
+//     const {error} = schemaTokenEmail.validate(req.body);
+//     if (error) res.status(400).send(error.details);
+
+//     return await pool.query('SELECT * FROM users WHERE email = $1', [email], (error, results) => {
+//         if (error) {
+//           return res.status(400).send(error.message);
+//         }
+//         if (results.rows.length == 0)
+//             return res.status(400).send({message : "No such user is on system"});
+//         else{
+
+//         }
+
+//     })
+
+
+// }
 
 module.exports = {register, login}
 
