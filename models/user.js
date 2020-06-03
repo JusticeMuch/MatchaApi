@@ -16,10 +16,6 @@ const UserSchema = new mongoose.Schema({
         type : String,
         required : true
     },
-    hashAuthenticate : {
-        type :String,
-        unique : true 
-    },
     authenticated : Boolean,
   }, {timestamps: true});
   
