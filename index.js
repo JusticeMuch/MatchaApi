@@ -5,7 +5,7 @@ const mongoose = require("mongoose");
 const authToken = require('./middleware/verifyToken')
 require('dotenv').config()
 const Pool = require('pg').Pool
-
+const profileRoute = require('./routes/profile');
 const app = express();
 const authRoute = require('./routes/auth');
 
@@ -27,24 +27,36 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use('/api/user', authRoute);
+app.use('/api/profile' ,profileRoute);
+// app.use('/api/profile', authToken, profileRoute); route with authentication
+
 
 app.get("/", (req, res) => {
   res.json({ message: "Welcome to Matcha API" });
 });
 
-const createUsersString = "create table if not exists users \
-                          (id serial primary key, username text not null unique,\
-                             email text not null unique, password text not null, \
-                             authenticated bool default 'f');";
+const createUsersString = "create table if not exists users"
+                          +"(id serial primary key,"  
+                          +"username text not null unique," 
+                           +"email text not null unique,"  
+                           +"password text not null," 
+                           +"authenticated bool default 'f')";
 
-const createProfileString = "create table if not exists profiles \
-                            (id integer not null , firstName text not null, \
-                              lastName text not null, age integer not null, \
-                              bio text not null, images json, \
-                              tags text [] not null, latitude integer , \
-                              longitude integer, address text not null ,\
-                              primary key(id) , foreign key(id) references users (id));";
-
+const createProfileString =  ""
+                              // +"create type sex_pref as enum('straight', 'lesbian', 'gay', 'bi-sexual');"
+                              +" create table if not exists profiles" 
+                              +" (id serial primary key references users(id) on delete cascade on update cascade,"
+                              +" first_name text not null," 
+                              +" last_name text not null," 
+                              +" username text not null references users (username) on delete cascade on update cascade,"
+                              +" fame integer default 0, "
+                              +" sexual_preferance sex_pref default 'bi-sexual',"
+                              +" email text not null references users (email) on delete cascade on update cascade," 
+                              +" age integer not null," 
+                              +" bio text not null,"  
+                              +" images text [], "
+                              +" tags text [] not null, latitude integer ,"
+                              +" longitude integer, address text not null );";
 
 mongoose
 .connect(process.env.MONGO_URL, {
@@ -52,13 +64,13 @@ mongoose
   useUnifiedTopology: true
 })
 .then(async () => {
-  await pool.query(createUsersString).then((error, results) => {
+  await pool.query(createUsersString).then((results, error) => {
     if (error) console.log(error);
     else console.log("Users table created");
   });
-  await pool.query(createProfileString).then((error, results) => {
+  await pool.query(createProfileString).then((results, error) => {
     if (error) console.log(error);
-    else console.log("Profiles table created");
+    else console.log("Profiles table created");c
   });
   await console.log("Connected to the database!");
   await app.listen(PORT, () => {

@@ -1,14 +1,12 @@
 const router = require('express').Router();
-const sendToken = require('../controllers/sendEmail');
+const {register, login, sendTokenPost, validateToken, resetPassword} = require('../controllers/user');
 require('dotenv').config();
-const {register, login} = require('../controllers/user');
 
-
-router.post('/sendConfirmation', sendToken.sendTokenPost);
-router.get('/confirmation/:token', sendToken.validateToken);
+router.post('/sendConfirmation', sendTokenPost);
+router.get('/confirmation/:token', validateToken);
 router.post('/register', register);
 router.post('/login', login);
-router.post('/resetPassword', )
+router.post('/resetPassword', resetPassword);
     
 
 module.exports = router;
