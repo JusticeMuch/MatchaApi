@@ -40,7 +40,7 @@ const createProfile = (data) => {
   const {id, first_name, last_name, username,sexual_preference, email, age, bio, tags, latitude, longitude, address} = data;
   return await pool.query("INSERT INTO profiles (id, first_name, last_name, username,sexual_preference, email, age, \
     bio, tags, latitude, longitude, address) VALUES ($1, $2, $3, $4 , $5, $6 , $7, $8 , $9, $10, $11) returtning *", 
-    [id, first_name, last_name, username,sexual_preference, email, age, bio, tags, latitude, longitude, address], 
+    [id, first_name, last_name, username,sexual_preference, email, age, bio, tags, latitude,longitude, address], 
           async (error, results) => {
             if (error) {
                 console.log(error.message);
