@@ -46,3 +46,5 @@ const updateById = async(table, id, values) =>{
         console.log(`Error in updateById on table ${table}`);
     }
   }
+
+module.exports = {EndpointResponse, getBy, getFiltered, updateById}

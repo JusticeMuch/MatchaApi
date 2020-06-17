@@ -1,4 +1,10 @@
 const {db, pgp} = require('../db');
+const bcrypt = require('bcrypt');
+const crypto = require('crypto');
+const Token = require('../models/token');
+const sgMail = require('@sendgrid/mail');
+sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+const jwt = require('jsonwebtoken');
 
 class Profile{
 
@@ -11,17 +17,28 @@ class Profile{
           [firstname, lastname, username, password, email],
         )
         .then(data => {
-          return { created: true, id: data[0].id };
+          try{
+            const token = new Token({ _userId: data[0].id, token: crypto.randomBytes(16).toString('hex') });
+            return await token.save(async function(err) {
+                if (err) { return res.status(500).send({ message: err.message }); }
+                const msg = {
+                    from: 'no-reply@matcha.com',
+                    to: email,
+                    subject: 'Account Verification Token',
+                    text: `Hello,\n\n Please verify your account by clicking the link: \nhttp://localhost:5000/api/user/confirmation/${token.token}`
+                  };
+                  await sgMail.send(msg);
+                  return({sucess : true, id : data[0].id});
+            });
+        }catch(err){
+            return ({sucess : false, Error : err.message});
+        }
         });
       } catch (err) {
           console.log('Error in model User.create()');
-        return { created: false, error: err };
+        return { sucess: false, error: err.message };
       }
     }
-
-  
-
-    
 }
-let createProfile = new Profile().createProfile;
-createProfile({firstname : "justin", lastname : "ronald", username : "jronald", password :"working", email :"test@test.com"});
+
+module.exports = {Profile}

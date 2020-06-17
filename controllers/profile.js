@@ -2,52 +2,214 @@ const Joi = require('@hapi/joi');
 const bcrypt = require('bcrypt');
 const crypto = require('crypto');
 const Token = require('../models/token');
+const sgMail = require('@sendgrid/mail');
+sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 const jwt = require('jsonwebtoken');
-const AWS = require('aws-sdk');
+const {db, pgp} = require('../db');
+const {Profile} = require('../models/profiles');
+const prof = new Profile();
+const {getBy, getFiltered, updateById} = require('../middleware/generic_methods');
 
-const Pool = require('pg').Pool
-const pool = new Pool({
-    user: process.env.PG_USERNAME,
-    host: 'localhost',
-    database: 'matcha',
-    password: process.env.PG_PASSWORD,
-    port: 5432
+const schemaRegister = Joi.object({
+    username : Joi.string().min(6).required(),
+    firstname : Joi.string().min(3).required(),
+    lastname : Joi.string().min(3).required(),
+    email : Joi.string().min(6).required().email(),
+    password : Joi.string().min(8).required()
 });
 
-const s3 = new AWS.S3({
-    accessKeyId: process.env.AWS_ACCESS_KEY,
-    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY
-  });
-  
+const schemaLogin = Joi.object({
+    email : Joi.string().min(5).required().email(),
+    password : Joi.string().min(6).required()
+});
 
-// const imagesToLinks = (req, res) => {
-//     const(username, imageArray) = req.body;
-//     const params = {
-//         Bucket: bucket,
-//         Key: fileName,
-//         Body: JSON.stringify(data, null, 2)
-//     };
-//     await s3.upload(params, function(s3Err, data) {
-//         if (s3Err) {
-//             console.log(s3Err);
+// const schemaTokenEmail = Joi.object({
+//     email : Joi.string().min(6).email().required()
+// })
+
+const schemaToken = Joi.object({
+    token : Joi.string().min(6).token().required()
+})
+
+const validateToken = (req, res) => {
+
+    const {error} = schemaToken.validate(req.params);
+    if (error) res.status(400).send(error.details);
+    console.log(req.params);
+    return Token.findOne({ token: req.params.token }, async (err, token) => {
+        console.log(token._userId);
+        if (!token) return res.status(400).send({success : false, error: 'We were unable to find a valid token. Your token may have expired.' });
+            return await updateById("Profile", token._userId, {authenticated : true}).then(
+              data =>{
+                  if (data.length == 0)
+                      return res.status(400).send({success : false, Error: 'We were unable to find a user for this token.' });
+                  return res.status(200).send({success : true , message :"The account has been verified. Please log in."});
+              }).catch(err => res.status(400).send({success : false, Error : err.message}));
+    })
+}
+
+// const sendTokenPost = async (req, res, next) =>{
+
+//     const {error} = schemaTokenEmail.validate(req.body);
+//     if (error) res.status(400).send(error.details);
+
+//     const {email} = req.body;
+ 
+//     return await pool.query('SELECT * FROM users WHERE email = $1 AND authenticated = $2', [email, false], async (error, results) => {
+//         if (error) {
+//           return res.status(400).send(error.message);
 //         }
-//         console.log(`File uploaded successfully at ${data.Location}`);
-//         fileLocations.push(data.Location);
-//     });
+//         console.log(results);
+//         if (results.rows.length == 0)
+//             return res.status(400).send({message : "No such user is on system or email has already been validated"});
+//         else{
+//             try{
+//                 let token = await Token.findOne({ _userId: results.rows[0].id});
+//                     token.token = crypto.randomBytes(16).toString('hex');
+//                 return await token.save(async function(err, token) {
+//                     if (err) { return res.status(500).send({ message: err.message }); }
+//                     if (!token) return res.status(400).send("Token did not save");
+//                     const msg = {
+//                         from: 'no-reply@matcha.com',
+//                         to: email,
+//                         subject: 'Account Verification Token',
+//                         text: `Hello,\n\n Please verify your account by clicking the link: \nhttp://localhost:5000/api/user/confirmation/${token.token}`
+//                       };
+//                       await sgMail.send(msg);
+//                       return await res.send({id : results.rows[0].id , msg : 'email confirmation sent'});
+//                 });
+//             }catch(err){
+//                 return res.status(400).send(err);
+//             }
+//         }
+
+//     })
+// };
+
+const register = async (req,res) => {
+    const {error} = await schemaRegister.validate(req.body);
+    if (error) res.status(400).send({success : false , Error : error.details});
+    
+    const {username, email, password, firstname, lastname} = req.body; 
+    const salt = await bcrypt.genSalt(10);
+    const hash = await bcrypt.hash(password, salt);
+    const obj = {email : email, firstname : firstname, lastname : lastname , username : username , password : hash}
+    const result = await prof.createProfile(obj);
+    
+    if (result.sucess)
+      res.send(result);
+    else
+      res.status(400).send(result);
+}
+
+const login = async (req, res) =>{
+
+    const {error} = await schemaLogin.validate(req.body);
+    if (error) return res.status(400).send({success : false, Error : error.details})
+
+    const {email, password} = req.body;
+
+    return await getFiltered("Profile", "email", email,"authenticated, password").then(
+      data =>{
+        const valid = await bcrypt.compare(password, data[0].password);
+
+        if (data.length == 0)
+            return res.status(400).send({success : false, Error : "No such user is on system"});
+        else if (!data[0].authenticated)
+            return res.status(400).send({success : false, Error : "Please validate email"});
+        else if (!valid)
+            return res.status(400).send({success : false, Error : "Invalid password"});
+        else{
+            const token = jwt.sign({_id : results.rows[0].id}, process.env.SECRET);
+            res.header('auth-token', token).send({success : true, data : {id : data[0].id}});
+        }
+      }).catch(error => res.status(400).send({sucess : false, Error : error.message}));
+}
+
+// const resetPassword = async (req, res) => {
+//     const {error} = schemaTokenEmail.validate(req.body);
+//     if (error) res.status(400).send(error.details);
+    
+//     const {email} = req.body;
+
+//     return await pool.query('SELECT * FROM users WHERE email = $1', [email], async (error, results) => {
+//         if (error) {
+//           return res.status(400).send(error.message);
+//         }
+//         if (results.rows.length == 0)
+//             return res.status(400).send({message : "No such user is on system"});
+//         else{
+//             const password = await crypto.randomBytes(6).toString('hex');
+//             const salt = await bcrypt.genSalt(10);
+//             const hash = await bcrypt.hash(password, salt);
+
+//             return await pool.query(
+//                 "UPDATE users SET password = $1 WHERE id = $2",
+//                 [hash, results.rows[0].id],
+//                 async (error, results) => {
+//                     console.log(results);
+//                     if (error)
+//                         return res.status(400).send(error.message);
+//                     else if (results.rowCount == 0)
+//                         return res.status(400).send({ message: 'We were unable to find a user for this email' });
+
+//                     const msg = {
+//                         from: 'no-reply@matcha.com',
+//                         to: email,
+//                         subject: 'Account Verification Token',
+//                         text: `Hello,\n\n Please note that your new password is the follwing , \n Password : ${password}`
+//                       };
+//                     await sgMail.send(msg);
+//                     return res.status(200).send("Password has been changed and an email has been sent with the new password.");
+//                 }
+//               )
+//         }
+//     })
 // }
 
-const createProfile = (data) => {
-  const {id, first_name, last_name, username,sexual_preference, email, age, bio, tags, latitude, longitude, address} = data;
-  return await pool.query("INSERT INTO profiles (id, first_name, last_name, username,sexual_preference, email, age, \
-    bio, tags, latitude, longitude, address) VALUES ($1, $2, $3, $4 , $5, $6 , $7, $8 , $9, $10, $11) returtning *", 
-    [id, first_name, last_name, username,sexual_preference, email, age, bio, tags, latitude,longitude, address], 
-          async (error, results) => {
-            if (error) {
-                console.log(error.message);
-                return error;
-            }else{
-                console.log(results.rows[0]);
-                return results.rows[0];
-            }
-        });
-}
+// const updateUsers = async (req, res) => {//must still test
+//     const {username, email, id} = req.body;
+//     return await pool.query(),
+//         async (error, results) => {
+//             if (error)
+//                 return res.status(400).send(error.message);
+//             else if (results.rowCount == 0)
+//                 return res.status(400).send({ message: 'This users values could not be updated'});
+//             else
+//                 return res.status(200).send({message:"Users values have been updated has been changed successfully", results : results.rowd[0]});
+//         }
+// }
+
+// const changePassword = async (req, res) => { //must still test
+//     const {oldPassword, newPassword, email} = req.body;
+//     return await pool.query('SELECT password FROM users WHERE email = $1', [email], async (error, results) => {
+//         if (error) {
+//           return res.status(400).send(error.message);
+//         }
+//         if (results.rows.length == 0)
+//             return res.status(400).send({message : "No such user is on system"});
+//         else if (!bcrypt.compare(oldPassword , results.rows[0].password))
+//             return res.status(400).send({message : "Wrong old password"});
+//         else{
+//             const salt = await bcrypt.genSalt(10);
+//             const hash = await bcrypt.hash(newPassword, salt);
+//             return await pool.query(
+//                 "UPDATE users SET password = $1 WHERE email = $2 ",
+//                 [hash, email],
+//                 async (error, results) => {
+//                     if (error)
+//                         return res.status(400).send(error.message);
+//                     else if (results.rowCount == 0)
+//                         return res.status(400).send({ message: 'This password could not be updated' });
+//                     else
+//                         return res.status(200).send({message:"Password has been changed successfully"})
+//             });
+//         }
+
+//     })
+// }
+
+// module.exports = {register, login, sendTokenPost, validateToken, resetPassword, changePassword, updateUsers}
+
+
+  
