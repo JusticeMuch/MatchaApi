@@ -55,8 +55,8 @@ const sendTokenPost = async (req, res, next) =>{
 
     const {email} = req.body;
  
-    return await getFiltered("Profile", "email", email, "id, email").then(data =>{
-        if (results.rows.length == 0)
+    return await getFiltered("Profile", "email", email, "id, email").then(async (data) =>{
+        if (data.length == 0)
             return res.status(400).send({message : "No such user is on system or email has already been validated"});
         else{
             try{
@@ -67,12 +67,12 @@ const sendTokenPost = async (req, res, next) =>{
                     if (!token) return res.status(400).send("Token did not save");
                     const msg = {
                         from: 'no-reply@matcha.com',
-                        to: data[0].schemaTokenEmail,
+                        to: email,
                         subject: 'Account Verification Token',
                         text: `Hello,\n\n Please verify your account by clicking the link: \nhttp://localhost:5000/api/user/confirmation/${token.token}`
                       };
                       await sgMail.send(msg);
-                      return await res.send({id : results.rows[0].id , msg : 'email confirmation sent'});
+                      return await res.send({success : true, id : data[0].id , msg : 'email confirmation sent'});
                 });
             }catch(err){
                 return res.status(400).send({success : false , Error : err.message});
@@ -88,13 +88,8 @@ const register = async (req,res) => {
     const {username, email, password, firstname, lastname} = req.body; 
     const salt = await bcrypt.genSalt(10);
     const hash = await bcrypt.hash(password, salt);
-    const obj = {email : email, firstname : firstname, lastname : lastname , username : username , password : hash}
-    const result = await prof.createProfile(obj);
-    
-    if (result.sucess)
-      res.send(result);
-    else
-      res.status(400).send(result);
+    const obj = {email : email, firstname : firstname, lastname : lastname , username : username , password : hash};
+    await prof.createProfile(req, res, obj);
 }
 
 const login = async (req, res) =>{
@@ -104,8 +99,8 @@ const login = async (req, res) =>{
 
     const {email, password} = req.body;
 
-    return await getFiltered("Profile", "email", email,"authenticated, password").then(
-      data =>{
+    return await getFiltered("Profile", "email", email,"authenticated, password, id").then(
+      async (data) =>{
         const valid = await bcrypt.compare(password, data[0].password);
 
         if (data.length == 0)
@@ -115,7 +110,8 @@ const login = async (req, res) =>{
         else if (!valid)
             return res.status(400).send({success : false, Error : "Invalid password"});
         else{
-            const token = jwt.sign({_id : results.rows[0].id}, process.env.SECRET);
+            console.log(data);
+            const token = jwt.sign({_id : data[0].id}, process.env.SECRET);
             res.header('auth-token', token).send({success : true, data : {id : data[0].id}});
         }
       }).catch(error => res.status(400).send({sucess : false, Error : error.message}));
@@ -128,7 +124,7 @@ const resetPassword = async (req, res) => {
     const {email} = req.body;
 
     return await getFiltered("Profile", "email", email, "id").then(
-      data => {
+      async (data) => {
         if (data.length == 0)
             return res.status(400).send({message : "No such user is on system"});
         else{
@@ -136,7 +132,7 @@ const resetPassword = async (req, res) => {
             const salt = await bcrypt.genSalt(10);
             const hash = await bcrypt.hash(password, salt);
 
-            return await updateById("Profile", data[0].id, {password : hash}).then(data =>{
+            return await updateById("Profile", data[0].id, {password : hash}).then(async (data) =>{
                 if (data.length == 0)
                   return res.status(400).send({success : false, message: 'We were unable to find a user for this email' });
 
@@ -155,7 +151,7 @@ const resetPassword = async (req, res) => {
 
 const updateUsers = async (req, res) => {//must still test
   const {id} = req.body;
-    return await updateById("Profile", id, checkField(req.body)).then(data => {
+    return await updateById("Profile", id, checkField(req.body, prof.profileKeys)).then(async (data) => {
       if (data.length == 0)
         return res.status(400).send({success : false, Error: 'This users values could not be updated'});
       else
@@ -165,16 +161,16 @@ const updateUsers = async (req, res) => {//must still test
 
 const changePassword = async (req, res) => { //must still test
     const {oldPassword, newPassword, id} = req.body;
-    return await getFiltered("Profile", "id", id, "password").then(data => {
+    return await getFiltered("Profile", "id", id, "password").then(async (data) => {
       if (data.length == 0)
             return res.status(400).send({success : false, Error : "No such user is on system"});
-        else if (!bcrypt.compare(oldPassword , results.rows[0].password))
+        else if (!bcrypt.compare(oldPassword , data[0].password))
             return res.status(400).send({success: false, Error : "Wrong old password"});
         else{
             const salt = await bcrypt.genSalt(10);
             const hash = await bcrypt.hash(newPassword, salt);
             return await updateById("Profile", id, {password : hash}).then(data => {
-              if (results.rowCount == 0)
+              if (data.length == 0)
                 return res.status(400).send({success : false, Error: 'This password could not be updated' });
               else
                 return res.status(200).send({success : true, message:"Password has been changed successfully"})

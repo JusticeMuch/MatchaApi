@@ -24,16 +24,18 @@ const getBy = async (type, value, table) => {
 const getFiltered = async (table, type, value, inputs) => {
     try{  
         return await db.any(
-        `SELECT $1:name FROM public."${table}" WHERE $2:name = $3`,
-        [inputs, type, value]
+        `SELECT ${inputs} FROM public."${table}" WHERE $1:name = $2`,
+        [type, value]
       );
     } catch (err) {
-        console.log(`Error in getFiltered on table ${table}`);
+        console.log(`Error in getFiltered on table ${table} + ${err}`);
         return null;
     }
   }
 
 const updateById = async(table, id, values) =>{
+  if (Object.keys(values).length == 0)
+    return {success : false, Error : "values are empty"}
     try {
       const query = `${pgp.helpers.update(
         values,
@@ -51,10 +53,10 @@ const updateById = async(table, id, values) =>{
 
 const checkField = async (obj, Fields) => { // returns keys and objects of Profile Field
   let result = {}
-  await obj.forEach((item, key) => {
-    if (!item && Fields.includes(key))
-      result[key] = item;
-  })
+  for (var key in obj){
+    if (!(obj[key]) && Fields.includes(key))
+      result[key] = obj[key];
+  }
   return result;
 }
 

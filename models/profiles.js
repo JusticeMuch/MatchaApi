@@ -8,7 +8,7 @@ const jwt = require('jsonwebtoken');
 
 class Profile{
   profileKeys = ["firstname", "lastname", "email", "gender", "description", "interests", "location", "last_visit", "popularity", "birthdate"]
-    async createProfile(object){
+    async createProfile(req, res, object){
         const {firstname, lastname, username, password, email} = object;
       try{
         return await db
@@ -16,11 +16,11 @@ class Profile{
           'INSERT INTO public."Profile" (firstname, lastname, username, password, email) VALUES ($1, $2, $3, $4, $5) RETURNING id',
           [firstname, lastname, username, password, email],
         )
-        .then(data => {
+        .then(async (data) => {
           try{
             const token = new Token({ _userId: data[0].id, token: crypto.randomBytes(16).toString('hex') });
             return await token.save(async function(err) {
-                if (err) { return res.status(500).send({ message: err.message }); }
+                if (err) { return res.status(400).send({success : false, Error: err.message }); }
                 const msg = {
                     from: 'no-reply@matcha.com',
                     to: email,
@@ -28,15 +28,15 @@ class Profile{
                     text: `Hello,\n\n Please verify your account by clicking the link: \nhttp://localhost:5000/api/user/confirmation/${token.token}`
                   };
                   await sgMail.send(msg);
-                  return({sucess : true, id : data[0].id});
+                  return res.send({success : true, id : data[0].id});
             });
         }catch(err){
-            return ({sucess : false, Error : err.message});
+            return res.send({success : false, Error : err.message});
         }
         });
       } catch (err) {
           console.log('Error in model User.create()');
-        return { sucess: false, error: err.message };
+        return res.status(400).send({ success: false, error: err.message });
       }
     }
 }
