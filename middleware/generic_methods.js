@@ -1,5 +1,4 @@
 const {pgp, db} = require('../db');
-
 // async updateById(id, values)
 
 function EndpointResponse(success , data = null, reasonForFailure = null){
@@ -26,7 +25,7 @@ const getFiltered = async (table, type, value, inputs) => {
     try{  
         return await db.any(
         `SELECT $1:name FROM public."${table}" WHERE $2:name = $3`,
-        [inputs, type, value],
+        [inputs, type, value]
       );
     } catch (err) {
         console.log(`Error in getFiltered on table ${table}`);
@@ -41,10 +40,22 @@ const updateById = async(table, id, values) =>{
         values,
         `${table}`,
       )} WHERE id = $/id/`;
-      await db.any(query, { id });
+     return  await db.any(query, { id }).then(async (data) => {
+        return await {success : true, data : data}
+      });
     } catch (err) {
-        console.log(`Error in updateById on table ${table}`);
+        console.log(`Error in updateById on table ${table} + ${err}`);
+        return {success : false, error : err}
     }
   }
 
-module.exports = {EndpointResponse, getBy, getFiltered, updateById}
+const checkField = async (obj, Fields) => { // returns keys and objects of Profile Field
+  let result = {}
+  await obj.forEach((item, key) => {
+    if (!item && Fields.includes(key))
+      result[key] = item;
+  })
+  return result;
+}
+
+module.exports = {EndpointResponse, getBy, getFiltered, updateById, checkField}

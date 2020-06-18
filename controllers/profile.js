@@ -8,7 +8,7 @@ const jwt = require('jsonwebtoken');
 const {db, pgp} = require('../db');
 const {Profile} = require('../models/profiles');
 const prof = new Profile();
-const {getBy, getFiltered, updateById} = require('../middleware/generic_methods');
+const {getBy, getFiltered, updateById, checkField} = require('../middleware/generic_methods');
 
 const schemaRegister = Joi.object({
     username : Joi.string().min(6).required(),
@@ -23,9 +23,9 @@ const schemaLogin = Joi.object({
     password : Joi.string().min(6).required()
 });
 
-// const schemaTokenEmail = Joi.object({
-//     email : Joi.string().min(6).email().required()
-// })
+const schemaTokenEmail = Joi.object({
+    email : Joi.string().min(6).email().required()
+})
 
 const schemaToken = Joi.object({
     token : Joi.string().min(6).token().required()
@@ -48,43 +48,38 @@ const validateToken = (req, res) => {
     })
 }
 
-// const sendTokenPost = async (req, res, next) =>{
+const sendTokenPost = async (req, res, next) =>{
 
-//     const {error} = schemaTokenEmail.validate(req.body);
-//     if (error) res.status(400).send(error.details);
+    const {error} = schemaTokenEmail.validate(req.body);
+    if (error) res.status(400).send(error.details);
 
-//     const {email} = req.body;
+    const {email} = req.body;
  
-//     return await pool.query('SELECT * FROM users WHERE email = $1 AND authenticated = $2', [email, false], async (error, results) => {
-//         if (error) {
-//           return res.status(400).send(error.message);
-//         }
-//         console.log(results);
-//         if (results.rows.length == 0)
-//             return res.status(400).send({message : "No such user is on system or email has already been validated"});
-//         else{
-//             try{
-//                 let token = await Token.findOne({ _userId: results.rows[0].id});
-//                     token.token = crypto.randomBytes(16).toString('hex');
-//                 return await token.save(async function(err, token) {
-//                     if (err) { return res.status(500).send({ message: err.message }); }
-//                     if (!token) return res.status(400).send("Token did not save");
-//                     const msg = {
-//                         from: 'no-reply@matcha.com',
-//                         to: email,
-//                         subject: 'Account Verification Token',
-//                         text: `Hello,\n\n Please verify your account by clicking the link: \nhttp://localhost:5000/api/user/confirmation/${token.token}`
-//                       };
-//                       await sgMail.send(msg);
-//                       return await res.send({id : results.rows[0].id , msg : 'email confirmation sent'});
-//                 });
-//             }catch(err){
-//                 return res.status(400).send(err);
-//             }
-//         }
-
-//     })
-// };
+    return await getFiltered("Profile", "email", email, "id, email").then(data =>{
+        if (results.rows.length == 0)
+            return res.status(400).send({message : "No such user is on system or email has already been validated"});
+        else{
+            try{
+                let token = await Token.findOne({ _userId: data[0].id});
+                    token.token = crypto.randomBytes(16).toString('hex');
+                return await token.save(async function(err, token) {
+                    if (err) { return res.status(500).send({ message: err.message }); }
+                    if (!token) return res.status(400).send("Token did not save");
+                    const msg = {
+                        from: 'no-reply@matcha.com',
+                        to: data[0].schemaTokenEmail,
+                        subject: 'Account Verification Token',
+                        text: `Hello,\n\n Please verify your account by clicking the link: \nhttp://localhost:5000/api/user/confirmation/${token.token}`
+                      };
+                      await sgMail.send(msg);
+                      return await res.send({id : results.rows[0].id , msg : 'email confirmation sent'});
+                });
+            }catch(err){
+                return res.status(400).send({success : false , Error : err.message});
+            }
+        }
+    }).catch(err => res.status(400).send({success : false, Error : err.message}))
+};
 
 const register = async (req,res) => {
     const {error} = await schemaRegister.validate(req.body);
@@ -126,90 +121,66 @@ const login = async (req, res) =>{
       }).catch(error => res.status(400).send({sucess : false, Error : error.message}));
 }
 
-// const resetPassword = async (req, res) => {
-//     const {error} = schemaTokenEmail.validate(req.body);
-//     if (error) res.status(400).send(error.details);
+const resetPassword = async (req, res) => {
+    const {error} = schemaTokenEmail.validate(req.body);
+    if (error) res.status(400).send({success : false, Error : error.details});
     
-//     const {email} = req.body;
+    const {email} = req.body;
 
-//     return await pool.query('SELECT * FROM users WHERE email = $1', [email], async (error, results) => {
-//         if (error) {
-//           return res.status(400).send(error.message);
-//         }
-//         if (results.rows.length == 0)
-//             return res.status(400).send({message : "No such user is on system"});
-//         else{
-//             const password = await crypto.randomBytes(6).toString('hex');
-//             const salt = await bcrypt.genSalt(10);
-//             const hash = await bcrypt.hash(password, salt);
+    return await getFiltered("Profile", "email", email, "id").then(
+      data => {
+        if (data.length == 0)
+            return res.status(400).send({message : "No such user is on system"});
+        else{
+            const password = await crypto.randomBytes(6).toString('hex');
+            const salt = await bcrypt.genSalt(10);
+            const hash = await bcrypt.hash(password, salt);
 
-//             return await pool.query(
-//                 "UPDATE users SET password = $1 WHERE id = $2",
-//                 [hash, results.rows[0].id],
-//                 async (error, results) => {
-//                     console.log(results);
-//                     if (error)
-//                         return res.status(400).send(error.message);
-//                     else if (results.rowCount == 0)
-//                         return res.status(400).send({ message: 'We were unable to find a user for this email' });
+            return await updateById("Profile", data[0].id, {password : hash}).then(data =>{
+                if (data.length == 0)
+                  return res.status(400).send({success : false, message: 'We were unable to find a user for this email' });
 
-//                     const msg = {
-//                         from: 'no-reply@matcha.com',
-//                         to: email,
-//                         subject: 'Account Verification Token',
-//                         text: `Hello,\n\n Please note that your new password is the follwing , \n Password : ${password}`
-//                       };
-//                     await sgMail.send(msg);
-//                     return res.status(200).send("Password has been changed and an email has been sent with the new password.");
-//                 }
-//               )
-//         }
-//     })
-// }
+                    const msg = {
+                        from: 'no-reply@matcha.com',
+                        to: email,
+                        subject: 'Password has changed as requested',
+                        text: `Hello,\n\n Please note that your new password is the follwing , \n Password : ${password}`
+                      };
+                    await sgMail.send(msg);
+                    return res.status(200).send({success : true , message :"Password has been changed and an email has been sent with the new password."});
+            })
+        }
+      }).catch(err => res.status(400).send({success : false,Error : err.message}));
+  }                  
 
-// const updateUsers = async (req, res) => {//must still test
-//     const {username, email, id} = req.body;
-//     return await pool.query(),
-//         async (error, results) => {
-//             if (error)
-//                 return res.status(400).send(error.message);
-//             else if (results.rowCount == 0)
-//                 return res.status(400).send({ message: 'This users values could not be updated'});
-//             else
-//                 return res.status(200).send({message:"Users values have been updated has been changed successfully", results : results.rowd[0]});
-//         }
-// }
+const updateUsers = async (req, res) => {//must still test
+  const {id} = req.body;
+    return await updateById("Profile", id, checkField(req.body)).then(data => {
+      if (data.length == 0)
+        return res.status(400).send({success : false, Error: 'This users values could not be updated'});
+      else
+        return res.status(200).send({success : true, message:"Users values have been updated has been changed successfully"});
+    }).catch(err => res.status(400).send({success : false, Error : err.message}))
+}
 
-// const changePassword = async (req, res) => { //must still test
-//     const {oldPassword, newPassword, email} = req.body;
-//     return await pool.query('SELECT password FROM users WHERE email = $1', [email], async (error, results) => {
-//         if (error) {
-//           return res.status(400).send(error.message);
-//         }
-//         if (results.rows.length == 0)
-//             return res.status(400).send({message : "No such user is on system"});
-//         else if (!bcrypt.compare(oldPassword , results.rows[0].password))
-//             return res.status(400).send({message : "Wrong old password"});
-//         else{
-//             const salt = await bcrypt.genSalt(10);
-//             const hash = await bcrypt.hash(newPassword, salt);
-//             return await pool.query(
-//                 "UPDATE users SET password = $1 WHERE email = $2 ",
-//                 [hash, email],
-//                 async (error, results) => {
-//                     if (error)
-//                         return res.status(400).send(error.message);
-//                     else if (results.rowCount == 0)
-//                         return res.status(400).send({ message: 'This password could not be updated' });
-//                     else
-//                         return res.status(200).send({message:"Password has been changed successfully"})
-//             });
-//         }
+const changePassword = async (req, res) => { //must still test
+    const {oldPassword, newPassword, id} = req.body;
+    return await getFiltered("Profile", "id", id, "password").then(data => {
+      if (data.length == 0)
+            return res.status(400).send({success : false, Error : "No such user is on system"});
+        else if (!bcrypt.compare(oldPassword , results.rows[0].password))
+            return res.status(400).send({success: false, Error : "Wrong old password"});
+        else{
+            const salt = await bcrypt.genSalt(10);
+            const hash = await bcrypt.hash(newPassword, salt);
+            return await updateById("Profile", id, {password : hash}).then(data => {
+              if (results.rowCount == 0)
+                return res.status(400).send({success : false, Error: 'This password could not be updated' });
+              else
+                return res.status(200).send({success : true, message:"Password has been changed successfully"})
+            }).catch(err => res.status(400).send({success : false, Error : err.message}))
+        }
+    }).catch(err => res.status(400).send({success : false, Error : err.message}))
+}
 
-//     })
-// }
-
-// module.exports = {register, login, sendTokenPost, validateToken, resetPassword, changePassword, updateUsers}
-
-
-  
+module.exports = {register, login, sendTokenPost, validateToken, resetPassword, changePassword, updateUsers}

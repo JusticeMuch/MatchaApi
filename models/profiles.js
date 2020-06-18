@@ -7,7 +7,7 @@ sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 const jwt = require('jsonwebtoken');
 
 class Profile{
-
+  profileKeys = ["firstname", "lastname", "email", "gender", "description", "interests", "location", "last_visit", "popularity", "birthdate"]
     async createProfile(object){
         const {firstname, lastname, username, password, email} = object;
       try{
