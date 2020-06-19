@@ -53,10 +53,11 @@ const updateById = async(table, id, values) =>{
 
 const checkField = async (obj, Fields) => { // returns keys and objects of Profile Field
   let result = {}
-  for (var key in obj){
-    if (!(obj[key]) && Fields.includes(key))
+  const keys = Object.keys(obj);
+  await keys.forEach(data => {
+    if (!(obj[data]) && Fields.includes(data))
       result[key] = obj[key];
-  }
+  });
   return result;
 }
 
