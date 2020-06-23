@@ -236,4 +236,15 @@ const deleteImage = async (req, res) => {
     }
 }
 
-module.exports = {register, login, sendTokenPost, validateToken, resetPassword, changePassword, updateUsers, uploadImage, deleteImage}
+const getProfileData = async (req, res) => {
+    const {id} = req.body;
+    const data = await getBy("id", id, "Profile").then(data => {return data[0]}).catch(
+        err => {return res.status(400).send({success : false, Error : err.message})});
+    if (!data || data.length == 0)
+        return await res.status(400).send({success : false, error : "No results"});
+    else
+        return await res.send({success : true, data : data});
+}
+
+module.exports = {register, login, sendTokenPost, validateToken, resetPassword, changePassword, updateUsers, uploadImage,
+     deleteImage, getProfileData}
