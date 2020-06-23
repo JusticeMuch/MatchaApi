@@ -1,4 +1,8 @@
 const {pgp, db} = require('../db');
+const request = require('request');
+require('dotenv').config();
+var FormData = require('form-data');
+
 // async updateById(id, values)
 
 function EndpointResponse(success , data = null, reasonForFailure = null){
@@ -54,11 +58,12 @@ const updateById = async(table, id, values) =>{
 const checkField = async (obj, Fields) => { // returns keys and objects of Profile Field
   let result = {}
   const keys = Object.keys(obj);
-  await keys.forEach(data => {
-    if (!(obj[data]) && Fields.includes(data))
-      result[key] = obj[key];
+  await keys.forEach((data) => {
+    if ((obj[data]) && Fields.includes(data)){
+      result[data] = obj[data];
+    }
   });
   return result;
 }
-
+ 
 module.exports = {EndpointResponse, getBy, getFiltered, updateById, checkField}

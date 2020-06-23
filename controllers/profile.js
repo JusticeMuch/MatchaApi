@@ -8,7 +8,11 @@ const jwt = require('jsonwebtoken');
 const {db, pgp} = require('../db');
 const {Profile} = require('../models/profiles');
 const prof = new Profile();
-const {getBy, getFiltered, updateById, checkField} = require('../middleware/generic_methods');
+const request = require('request');
+require('dotenv').config();
+var FormData = require('form-data');
+
+const {getBy, getFiltered, updateById, checkField, imageToLink} = require('../middleware/generic_methods');
 
 const schemaRegister = Joi.object({
     username : Joi.string().min(6).required(),
@@ -151,7 +155,8 @@ const resetPassword = async (req, res) => {
 
 const updateUsers = async (req, res) => {//must still test
   const {id} = req.body;
-    return await updateById("Profile", id, checkField(req.body, prof.profileKeys)).then(async (data) => {
+  const filtered = await checkField(req.body, prof.profileKeys);
+    return await updateById("Profile", id, filtered).then(async (data) => {
       if (data.length == 0)
         return res.status(400).send({success : false, Error: 'This users values could not be updated'});
       else
@@ -179,4 +184,56 @@ const changePassword = async (req, res) => { //must still test
     }).catch(err => res.status(400).send({success : false, Error : err.message}))
 }
 
-module.exports = {register, login, sendTokenPost, validateToken, resetPassword, changePassword, updateUsers}
+const uploadImage = async (req, res) => {
+    const image = req.file;
+    const {id} = req.body;
+
+    let images = await getFiltered("Profile", "id", id, "images").then((data) => {return data[0].images});
+    if (!images)
+        images = [];
+    if (images.length >= 5)
+        res.status(400).send({success : false, Error : "Photo limit of 5 photos is reached"});
+    else{
+        const imageLink = await imageToLink(image);
+        const formData = {
+            key: process.env.IMGDB_KEY,
+            image: {
+              value:  image.buffer,
+              options: {
+                filename: image.originalname,
+                contentType: image.mimetype
+              }
+            }
+          };
+          return await request.post({url:process.env.IMGDB_EP, formData: formData}, async  (err, httpResponse, body) => {
+            if (err) {
+              console.error('ImageToLink upload failed:', err);
+              return null
+            }
+            const url = JSON.parse(body).data.image.url;
+            images.push(url);
+            return await updateById("Profile", id, {images : images}).then(async (data) =>{
+                return  res.send({success : true, message : "images uploaded successfully", url : url})
+            }).catch(err => res.status(400).send({success: false, Error : err.message}));
+          });
+        
+    }
+}
+
+const deleteImage = async (req, res) => {
+    const {id, photo} = req.body;
+    if (!id || !photo || id == undefined || photo == undefined)
+        return res.status(400).send({success : false, Error : "Fields 'id' or/and 'photo' are blank"});
+    let images = await  getFiltered("Profile", "id", id, "images").then(data => {return data[0].images});
+    const len = (await images).length;
+    const imagesFiltered = (await images).filter((value) => value != photo);
+    console.log(imagesFiltered.length);
+    if (imagesFiltered.length != len - 1)
+        return res.status(400).send({success : false, Error : "Photo url sent is not in db as such it cant be deleted"});
+    else{
+        updateById("Profile", id, {images : imagesFiltered}).then().catch(err=> res.status(400).send({success : false, Error : err.message}));
+        return res.send({success : true , message : "image has been deleted"});
+    }
+}
+
+module.exports = {register, login, sendTokenPost, validateToken, resetPassword, changePassword, updateUsers, uploadImage, deleteImage}

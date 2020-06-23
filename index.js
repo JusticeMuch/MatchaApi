@@ -9,6 +9,7 @@ const profileRoute = require('./routes/profile');
 const app = express();
 const authRoute = require('./routes/auth');
 
+
 const PORT = process.env.PORT || 8080;
 var corsOptions = {
   origin: "http://localhost:8081"
