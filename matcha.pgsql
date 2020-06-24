@@ -1,4 +1,6 @@
 
+CREATE SCHEMA IF NOT EXISTS public AUTHORIZATION jronald;
+
 CREATE SEQUENCE public.block_seq
     START WITH 1
     INCREMENT BY 1
@@ -13,19 +15,30 @@ CREATE SEQUENCE public.like_seq
     MAXVALUE 99999999
     CACHE 1;
 
+CREATE SEQUENCE public.report_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    MAXVALUE 99999999
+    CACHE 1;
+
+
+ALTER TABLE public.report_seq OWNER TO jronald;
 
 ALTER TABLE public.block_seq OWNER TO jronald;
+
+ALTER TABLE public.like_seq OWNER TO jronald;
 
 SET default_tablespace = '';
 
 SET default_with_oids = false;
 
 --
--- Name: Block; Type: TABLE; Schema: public; Owner: jronald
+-- Name: Report; Type: TABLE; Schema: public; Owner: jronald
 --
 
-CREATE TABLE public."Block" (
-    id integer DEFAULT nextval('public.block_seq') NOT NULL,
+CREATE TABLE public."Report" (
+    id integer DEFAULT nextval('public.report_seq') NOT NULL,
     reporting_user integer NOT NULL,
     reported_user integer NOT NULL,
     reason text NOT NULL,
@@ -34,7 +47,7 @@ CREATE TABLE public."Block" (
 );
 
 
-ALTER TABLE public."Block" OWNER TO jronald;
+ALTER TABLE public."Report" OWNER TO jronald;
 
 CREATE TABLE public."Like" (
     id integer DEFAULT nextval('public.like_seq') NOT NULL,
@@ -45,6 +58,16 @@ CREATE TABLE public."Like" (
 
 
 ALTER TABLE public."Like" OWNER TO jronald;
+
+CREATE TABLE public."Block" (
+    id integer DEFAULT nextval('public.block_seq') NOT NULL,
+    blocking_user integer NOT NULL,
+    blocked_user integer NOT NULL,
+    date timestamp without time zone NOT NULL
+);
+
+
+ALTER TABLE public."Block" OWNER TO jronald;
 
 --
 -- Name: match_seq; Type: SEQUENCE; Schema: public; Owner: jronald
@@ -104,19 +127,6 @@ CREATE TABLE public."Message" (
 
 ALTER TABLE public."Message" OWNER TO jronald;
 
---
--- Name: report_seq; Type: SEQUENCE; Schema: public; Owner: jronald
---
-
-CREATE SEQUENCE public.report_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    MAXVALUE 99999999
-    CACHE 1;
-
-
-ALTER TABLE public.report_seq OWNER TO jronald;
 
 --
 -- Name: profile_seq; Type: SEQUENCE; Schema: public; Owner: jronald
@@ -189,8 +199,8 @@ CREATE TABLE public."Visit" (
 ALTER TABLE public."Visit" OWNER TO jronald;
 
 
-ALTER TABLE ONLY public."Block"
-    ADD CONSTRAINT "pk_Block" PRIMARY KEY (id);
+ALTER TABLE ONLY public."Report"
+    ADD CONSTRAINT "pk_Report" PRIMARY KEY (id);
 
 --
 -- Name: Like pk_Like; Type: CONSTRAINT; Schema: public; Owner: jronald
@@ -198,6 +208,9 @@ ALTER TABLE ONLY public."Block"
 
 ALTER TABLE ONLY public."Like"
     ADD CONSTRAINT "pk_Like" PRIMARY KEY (id);
+
+ALTER TABLE ONLY public."Block"
+    ADD CONSTRAINT "pk_Block" PRIMARY KEY (id);
 
 
 --
@@ -228,19 +241,19 @@ ALTER TABLE ONLY public."Visit"
 
 
 --
--- Name: Block fk_Block_reported_user; Type: FK CONSTRAINT; Schema: public; Owner: jronald
+-- Name: Report fk_Report_reported_user; Type: FK CONSTRAINT; Schema: public; Owner: jronald
 --
 
-ALTER TABLE ONLY public."Block"
-    ADD CONSTRAINT "fk_Block_reported_user" FOREIGN KEY ("reported_user") REFERENCES public."Profile"(id);
+ALTER TABLE ONLY public."Report"
+    ADD CONSTRAINT "fk_Report_reported_user" FOREIGN KEY ("reported_user") REFERENCES public."Profile"(id);
 
 
 --
--- Name: Block fk_Block_reporting_user; Type: FK CONSTRAINT; Schema: public; Owner: jronald
+-- Name: Report fk_Report_reporting_user; Type: FK CONSTRAINT; Schema: public; Owner: jronald
 --
 
-ALTER TABLE ONLY public."Block"
-    ADD CONSTRAINT "fk_Block_reporting_user" FOREIGN KEY ("reporting_user") REFERENCES public."Profile"(id);
+ALTER TABLE ONLY public."Report"
+    ADD CONSTRAINT "fk_Report_reporting_user" FOREIGN KEY ("reporting_user") REFERENCES public."Profile"(id);
 
 
 --
@@ -258,6 +271,13 @@ ALTER TABLE ONLY public."Like"
 ALTER TABLE ONLY public."Like"
     ADD CONSTRAINT "fk_Like_liking_user" FOREIGN KEY ("liking_user") REFERENCES public."Profile"(id);
 
+
+ALTER TABLE ONLY public."Block"
+    ADD CONSTRAINT "fk_Block_blocked_user" FOREIGN KEY ("blocked_user") REFERENCES public."Profile"(id);
+
+
+ALTER TABLE ONLY public."Block"
+    ADD CONSTRAINT "fk_Block_blocking_user" FOREIGN KEY ("blocking_user") REFERENCES public."Profile"(id);
 
 --
 -- Name: Match fk_Match_user1; Type: FK CONSTRAINT; Schema: public; Owner: jronald

@@ -1,6 +1,5 @@
 const pgp = require('pg-promise')({});
 require('dotenv').config();
-const QueryFile = pgp.QueryFile;
 
 console.log(process.env.PG_USERNAME);
 const settings = {
@@ -13,7 +12,5 @@ const settings = {
 };
 
 const db = pgp(settings);
-
-// db.any(new QueryFile('matcha.pgsql'));
 
 module.exports = {db, pgp}

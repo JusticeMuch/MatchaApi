@@ -10,6 +10,7 @@ const {Profile} = require('../models/profiles');
 const prof = new Profile();
 const request = require('request');
 require('dotenv').config();
+const unirest = require("unirest");
 var FormData = require('form-data');
 
 const {getBy, getFiltered, updateById, checkField, imageToLink} = require('../middleware/generic_methods');
@@ -246,5 +247,42 @@ const getProfileData = async (req, res) => {
         return await res.send({success : true, data : data});
 }
 
+const updateLocation = async (req, res) => {
+    const {id} = req.body;
+    let ip = null;
+
+    if (id == undefined || !id || id == "")
+        res.status(400).send({success : false, Error : "ip field is empty"});
+
+    if (req.headers['x-forwarded-for']) 
+        ip = req.headers['x-forwarded-for'].split(",")[0];
+    else if (req.connection && req.connection.remoteAddress) 
+        ip = req.connection.remoteAddress;
+    else
+        ip = req.ip;
+
+    let request = unirest("GET", "https://ip-geolocation-ipwhois-io.p.rapidapi.com/json/");
+    
+    request.query({"ip": ip});
+
+    request.headers({
+        "x-rapidapi-host": "ip-geolocation-ipwhois-io.p.rapidapi.com",
+        "x-rapidapi-key": process.env.LOCATION_API_KEY,
+        "useQueryString": true
+    });
+    
+    return await request.end(async (response) => {
+        if (response.error)
+            res.status(400).send({success : false, Error : response.error});
+        else{
+            const lat = response.body.latitude;
+            const long = response.body.longitude;
+            return await updateById("Profile", id, {location : [parseFloat(lat), parseFloat(long)]}).then(async (data) => {
+                res.send({success : true, latitude : lat, longitude  : long});
+            }).catch(err => res.status(400).send({success : false, Error : err.message}));
+        }
+    });
+}
+
 module.exports = {register, login, sendTokenPost, validateToken, resetPassword, changePassword, updateUsers, uploadImage,
-     deleteImage, getProfileData}
+     deleteImage, getProfileData, updateLocation}

@@ -6,8 +6,8 @@ const sgMail = require('@sendgrid/mail');
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 const jwt = require('jsonwebtoken');
 
-class Likes{
-    async createLike(req, res, object){
+class Match{
+    async createMatch(req, res, object){
         const {user1, user2, date} = object;
       try{
         return await db
@@ -22,7 +22,7 @@ class Likes{
             return await res.status(200).send({success : true, message : `match id : ${data[0].id} created`});
         });       
       } catch (err) {
-          console.log('Error in model Match.createLike()');
+          console.log('Error in model Match.createMatch()');
         return res.status(400).send({ success: false, error: err.message });
       }
     }

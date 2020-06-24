@@ -8,6 +8,8 @@ const Pool = require('pg').Pool
 const profileRoute = require('./routes/profile');
 const app = express();
 const authRoute = require('./routes/auth');
+const {db, pgp} = require('./db');
+const QueryFile = pgp.QueryFile;
 
 
 const PORT = process.env.PORT || 8080;
@@ -35,6 +37,7 @@ mongoose
   useUnifiedTopology: true
 })
 .then(async () => {
+  // await db.any(new QueryFile('MatchaApi/matcha.pgsql'));
   await app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}.`);
   });

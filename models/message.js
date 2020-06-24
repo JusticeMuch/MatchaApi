@@ -41,6 +41,17 @@ class Message{
         return Error("Something when wrong in Message.getMessages");
         }
     }
+
+    async updateRead(message_id){
+        try{
+            return await db.any(`UPDATE "Message SET read = true WHERE id = ${message_id}`).then(data => {
+                return data;
+            })
+        }catch(err){
+            console.log("Error in Message.updateRead()");
+            return Error("Something went wrong in Message.updateRead()");
+        }
+    }
 }
 
 module.exports = {Message}
