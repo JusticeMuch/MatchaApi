@@ -27,10 +27,10 @@ class Blocks{
       }
     }
 
-    async getBlock(blocking_user, blocked_user){
+    async getBlock(blocking_user){
         try {
-            return await db.any(`SELECT id, date FROM public."Block" WHERE blocked_user = $1 AND blocking_user = $2`,
-            [blocked_user, blocking_user]).then(async (data) => {
+            return await db.any(`SELECT id, date FROM public."Block" WHERE blocking_user = $1`,
+            [blocking_user]).then(async (data) => {
                 if (data.length == 0)
                     return null
                 else

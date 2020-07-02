@@ -157,6 +157,7 @@ CREATE TABLE public."Profile" (
     suspended boolean DEFAULT false,
     gender text,
     sexual_orientation text,
+    sexual_preference text,
     description text,
     interests text[],
     images text[],
@@ -164,7 +165,7 @@ CREATE TABLE public."Profile" (
     location numeric[],
     last_visit timestamp without time zone,
     popularity double precision,
-    birthDate date
+    birthDate date,
 );
 
 

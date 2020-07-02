@@ -155,7 +155,7 @@ const resetPassword = async (req, res) => {
   }                  
 
 const updateUsers = async (req, res) => {//must still test
-  const {id} = req.body;
+  const id = req.user._id;
   const filtered = await checkField(req.body, prof.profileKeys);
     return await updateById("Profile", id, filtered).then(async (data) => {
       if (data.length == 0)
@@ -187,7 +187,7 @@ const changePassword = async (req, res) => { //must still test
 
 const uploadImage = async (req, res) => {
     const image = req.file;
-    const {id} = req.body;
+    const id = req.user._id
 
     let images = await getFiltered("Profile", "id", id, "images").then((data) => {return data[0].images});
     if (!images)
@@ -222,9 +222,11 @@ const uploadImage = async (req, res) => {
 }
 
 const deleteImage = async (req, res) => {
-    const {id, photo} = req.body;
-    if (!id || !photo || id == undefined || photo == undefined)
-        return res.status(400).send({success : false, Error : "Fields 'id' or/and 'photo' are blank"});
+    const {photo} = req.body;
+    const id = req.user._id
+
+    if (!photo || photo == undefined)
+        return res.status(400).send({success : false, Error : "Field photo' are blank"});
     let images = await  getFiltered("Profile", "id", id, "images").then(data => {return data[0].images});
     const len = (await images).length;
     const imagesFiltered = (await images).filter((value) => value != photo);
@@ -237,9 +239,8 @@ const deleteImage = async (req, res) => {
     }
 }
 
-const getProfileData = async (req, res) => {
-    const {id} = req.body;
-    const data = await getBy("id", id, "Profile").then(data => {return data[0]}).catch(
+const getProfileData = async (req, res, next) => {
+    const data = await getBy("id", req.user._id, "Profile").then(data => {return data[0]}).catch(
         err => {return res.status(400).send({success : false, Error : err.message})});
     if (!data || data.length == 0)
         return await res.status(400).send({success : false, error : "No results"});
@@ -248,11 +249,8 @@ const getProfileData = async (req, res) => {
 }
 
 const updateLocation = async (req, res) => {
-    const {id} = req.body;
+    const {id} = req.user._id
     let ip = null;
-
-    if (id == undefined || !id || id == "")
-        res.status(400).send({success : false, Error : "ip field is empty"});
 
     if (req.headers['x-forwarded-for']) 
         ip = req.headers['x-forwarded-for'].split(",")[0];

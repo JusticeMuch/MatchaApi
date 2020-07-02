@@ -21,8 +21,8 @@ app.use(cors(corsOptions));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-app.use('/api/user', authRoute);
-app.use('/api/profile' ,profileRoute);
+app.use('/api/auth', authRoute);
+app.use('/api/profile' ,authToken, profileRoute);
 // app.use('/api/profile', authToken, profileRoute); route with authentication
 
 
