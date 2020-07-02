@@ -1,21 +1,21 @@
 
 CREATE SCHEMA IF NOT EXISTS public AUTHORIZATION jronald;
 
-CREATE SEQUENCE public.block_seq
+CREATE SEQUENCE IF NOT EXISTS public.block_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
     MAXVALUE 99999999
     CACHE 1;
 
-CREATE SEQUENCE public.like_seq
+CREATE SEQUENCE IF NOT EXISTS public.like_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
     MAXVALUE 99999999
     CACHE 1;
 
-CREATE SEQUENCE public.report_seq
+CREATE SEQUENCE IF NOT EXISTS public.report_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
@@ -37,7 +37,7 @@ SET default_with_oids = false;
 -- Name: Report; Type: TABLE; Schema: public; Owner: jronald
 --
 
-CREATE TABLE public."Report" (
+CREATE TABLE IF NOT EXISTS public."Report" (
     id integer DEFAULT nextval('public.report_seq') NOT NULL,
     reporting_user integer NOT NULL,
     reported_user integer NOT NULL,
@@ -49,7 +49,7 @@ CREATE TABLE public."Report" (
 
 ALTER TABLE public."Report" OWNER TO jronald;
 
-CREATE TABLE public."Like" (
+CREATE TABLE IF NOT EXISTS public."Like" (
     id integer DEFAULT nextval('public.like_seq') NOT NULL,
     liked_user integer NOT NULL,
     liking_user integer NOT NULL,
@@ -59,7 +59,7 @@ CREATE TABLE public."Like" (
 
 ALTER TABLE public."Like" OWNER TO jronald;
 
-CREATE TABLE public."Block" (
+CREATE TABLE IF NOT EXISTS public."Block" (
     id integer DEFAULT nextval('public.block_seq') NOT NULL,
     blocking_user integer NOT NULL,
     blocked_user integer NOT NULL,
@@ -73,7 +73,7 @@ ALTER TABLE public."Block" OWNER TO jronald;
 -- Name: match_seq; Type: SEQUENCE; Schema: public; Owner: jronald
 --
 
-CREATE SEQUENCE public.match_seq
+CREATE SEQUENCE IF NOT EXISTS public.match_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
@@ -87,7 +87,7 @@ ALTER TABLE public.match_seq OWNER TO jronald;
 -- Name: Match; Type: TABLE; Schema: public; Owner: jronald
 --
 
-CREATE TABLE public."Match" (
+CREATE TABLE IF NOT EXISTS public."Match" (
     id integer DEFAULT nextval('public.match_seq') NOT NULL,
     user1 integer NOT NULL,
     user2 integer NOT NULL,
@@ -101,7 +101,7 @@ ALTER TABLE public."Match" OWNER TO jronald;
 -- Name: message_seq; Type: SEQUENCE; Schema: public; Owner: jronald
 --
 
-CREATE SEQUENCE public.message_seq
+CREATE SEQUENCE IF NOT EXISTS public.message_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
@@ -115,7 +115,7 @@ ALTER TABLE public.message_seq OWNER TO jronald;
 -- Name: Message; Type: TABLE; Schema: public; Owner: jronald
 --
 
-CREATE TABLE public."Message" (
+CREATE TABLE IF NOT EXISTS public."Message" (
     id integer DEFAULT nextval('public.message_seq') NOT NULL,
     match_id integer NOT NULL,
     author integer NOT NULL,
@@ -132,7 +132,7 @@ ALTER TABLE public."Message" OWNER TO jronald;
 -- Name: profile_seq; Type: SEQUENCE; Schema: public; Owner: jronald
 --
 
-CREATE SEQUENCE public.profile_seq
+CREATE SEQUENCE IF NOT EXISTS public.profile_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
@@ -146,7 +146,7 @@ ALTER TABLE public.profile_seq OWNER TO jronald;
 -- Name: Profile; Type: TABLE; Schema: public; Owner: jronald
 --
 
-CREATE TABLE public."Profile" (
+CREATE TABLE IF NOT EXISTS public."Profile" (
     id integer DEFAULT nextval('public.profile_seq') NOT NULL,
     firstname character varying(30) NOT NULL,
     lastname character varying(40) NOT NULL,
@@ -165,7 +165,7 @@ CREATE TABLE public."Profile" (
     location numeric[],
     last_visit timestamp without time zone,
     popularity double precision,
-    birthDate date,
+    birthDate date
 );
 
 
@@ -175,7 +175,7 @@ ALTER TABLE public."Profile" OWNER TO jronald;
 -- Name: visit_seq; Type: SEQUENCE; Schema: public; Owner: jronald
 --
 
-CREATE SEQUENCE public.visit_seq
+CREATE SEQUENCE IF NOT EXISTS public.visit_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
@@ -189,7 +189,7 @@ ALTER TABLE public.visit_seq OWNER TO jronald;
 -- Name: Visit; Type: TABLE; Schema: public; Owner: jronald
 --
 
-CREATE TABLE public."Visit" (
+CREATE TABLE IF NOT EXISTS public."Visit" (
     id integer DEFAULT nextval('public.visit_seq') NOT NULL,
     visitor integer NOT NULL,
     visited integer NOT NULL,
