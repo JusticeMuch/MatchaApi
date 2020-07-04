@@ -13,7 +13,7 @@ require('dotenv').config();
 const unirest = require("unirest");
 var FormData = require('form-data');
 
-const {getBy, getFiltered, updateById, checkField, imageToLink} = require('../middleware/generic_methods');
+const {getBy, getFiltered, updateById, checkField} = require('../middleware/generic_methods');
 
 const schemaRegister = Joi.object({
     username : Joi.string().min(6).required(),
@@ -39,8 +39,8 @@ const schemaToken = Joi.object({
 const validateToken = (req, res) => {
 
     const {error} = schemaToken.validate(req.params);
-    if (error) res.status(400).send(error.details);
-    console.log(req.params);
+    if (error) res.status(400).send({success : false , Error : error.details});
+
     return Token.findOne({ token: req.params.token }, async (err, token) => {
         console.log(token._userId);
         if (!token) return res.status(400).send({success : false, error: 'We were unable to find a valid token. Your token may have expired.' });
@@ -56,7 +56,7 @@ const validateToken = (req, res) => {
 const sendTokenPost = async (req, res, next) =>{
 
     const {error} = schemaTokenEmail.validate(req.body);
-    if (error) res.status(400).send(error.details);
+    if (error) res.status(400).send({success : false , Error : error.details});
 
     const {email} = req.body;
  
