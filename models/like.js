@@ -6,7 +6,7 @@ const sgMail = require('@sendgrid/mail');
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 const jwt = require('jsonwebtoken');
 
-class Likes{
+class Like{
     async createLike(req, res, object){
         const {liked_user, liking_user, date} = object;
       try{

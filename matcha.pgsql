@@ -213,7 +213,6 @@ ALTER TABLE ONLY public."Like"
 ALTER TABLE ONLY public."Block"
     ADD CONSTRAINT "pk_Block" PRIMARY KEY (id);
 
-
 --
 -- Name: Match pk_Match; Type: CONSTRAINT; Schema: public; Owner: jronald
 --

@@ -23,6 +23,11 @@ const schemaRegister = Joi.object({
     password : Joi.string().min(8).required()
 });
 
+const signOptions = {
+    expiresIn:  "12h",
+    algorithm:  "RS256"  
+   };
+
 const schemaLogin = Joi.object({
     email : Joi.string().min(5).required().email(),
     password : Joi.string().min(6).required()
@@ -74,7 +79,7 @@ const sendTokenPost = async (req, res, next) =>{
                         from: 'no-reply@matcha.com',
                         to: email,
                         subject: 'Account Verification Token',
-                        text: `Hello,\n\n Please verify your account by clicking the link: \nhttp://localhost:5000/api/user/confirmation/${token.token}`
+                        text: `Hello,\n\n Please verify your account by clicking the link: \nhttp://localhost:5000/api/auth/confirmation/${token.token}`
                       };
                       await sgMail.send(msg);
                       return await res.send({success : true, id : data[0].id , msg : 'email confirmation sent'});
@@ -115,8 +120,7 @@ const login = async (req, res) =>{
         else if (!valid)
             return res.status(400).send({success : false, Error : "Invalid password"});
         else{
-            console.log(data);
-            const token = jwt.sign({_id : data[0].id}, process.env.SECRET);
+            const token = jwt.sign({_id : data[0].id}, process.env.SECRET, signOptions);
             res.header('auth-token', token).send({success : true, data : {id : data[0].id}});
         }
       }).catch(error => res.status(400).send({sucess : false, Error : error.message}));
@@ -166,8 +170,8 @@ const updateUsers = async (req, res) => {//must still test
 }
 
 const changePassword = async (req, res) => { //must still test
-    const {oldPassword, newPassword, id} = req.body;
-    return await getFiltered("Profile", "id", id, "password").then(async (data) => {
+    const {oldPassword, newPassword} = req.body;
+    return await getFiltered("Profile", "id", req.user._id, "password").then(async (data) => {
       if (data.length == 0)
             return res.status(400).send({success : false, Error : "No such user is on system"});
         else if (!bcrypt.compare(oldPassword , data[0].password))
@@ -249,7 +253,7 @@ const getProfileData = async (req, res, next) => {
 }
 
 const updateLocation = async (req, res) => {
-    const {id} = req.user._id
+    const id = req.user._id
     let ip = null;
 
     if (req.headers['x-forwarded-for']) 

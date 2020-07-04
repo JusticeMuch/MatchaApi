@@ -41,6 +41,17 @@ class Visit{
         return Error("Something when wrong in Visit.getVisit()");
         }
     }
+
+    async getVisitCount(visited){
+        try {
+            db.any(`SELECT COUNT(id) FROM public."Visit" WHERE visited = $1`, [visited]).then(data => {
+                return data;
+            })
+        } catch (error) {
+            console.log(error);
+            return Error(error);
+        }
+    }
 }
 
 module.exports = {Visit}

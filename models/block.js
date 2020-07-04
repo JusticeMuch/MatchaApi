@@ -6,7 +6,7 @@ const sgMail = require('@sendgrid/mail');
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 const jwt = require('jsonwebtoken');
 
-class Blocks{
+class Block{
     async createBlock(req, res, object){
         const {blocked_user, blocking_user, date} = object;
       try{
@@ -29,7 +29,7 @@ class Blocks{
 
     async getBlock(blocking_user){
         try {
-            return await db.any(`SELECT id, date FROM public."Block" WHERE blocking_user = $1`,
+            return await db.any(`SELECT id, date, blocked_user FROM public."Block" WHERE blocking_user = $1`,
             [blocking_user]).then(async (data) => {
                 if (data.length == 0)
                     return null

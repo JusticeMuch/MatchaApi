@@ -5,12 +5,11 @@ const Token = require('../models/token');
 const sgMail = require('@sendgrid/mail');
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 const jwt = require('jsonwebtoken');
-
-const Pool = require('pg').Pool
-const pool = new Pool({
-    user: process.env.PG_USERNAME,
-    host: 'localhost',
-    database: 'matcha',
-    password: process.env.PG_PASSWORD,
-    port: 5432
-});
+const {db, pgp} = require('../db');
+const {like} = require('../models/like');
+const {match} = require('../models/match');
+const {message} = require('../models/message');
+const {visit} = require('../models/visit');
+const request = require('request');
+const {getBy, getFiltered, updateById, checkField} = require('../middleware/generic_methods');
+require('dotenv').config();

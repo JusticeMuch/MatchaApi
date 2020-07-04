@@ -52,6 +52,18 @@ class Message{
             return Error("Something went wrong in Message.updateRead()");
         }
     }
+
+    async checkNumberMessagesRead(match_id){
+        try {
+            return await db.any(`SELECT COUNT(match_id) FROM public."Message" WHERE match_id = $1 AND read = $2`,
+                [match_id, false]).then(data => {
+                    return data
+                });
+        } catch (error) {
+            console.log(error);
+            return Error(error);
+        }
+    }
 }
 
 module.exports = {Message}

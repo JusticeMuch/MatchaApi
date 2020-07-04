@@ -1,5 +1,7 @@
 const {db, pgp} = require('../db');
 const Joi = require('@hapi/joi');
+const Block = require('../models/block');
+const block = new Block();
 const {getBy, getFiltered, updateById, checkField} = require('../middleware/generic_methods');
 
 const schema = Joi.object({
@@ -25,11 +27,7 @@ const filter = {
 }
 
 const filterInterests = (interests, data) => {
-    let result = [];
-    data.forEach(elem => {
-        if (interests.every(el => elem.interests.includes(el)))
-             result.push(elem);
-    });
+    return data.filter(elem => interests.every(el => elem.interests.includes(el)));
 }
 
 const filterLocation = (radius, data, userLoc) => {
@@ -39,6 +37,18 @@ const filterLocation = (radius, data, userLoc) => {
             result.push(elem);
     })
     return result;
+}
+
+const filterBlocked = async (userId, data) => {
+    try {
+        blockedData = await block.getBlock(userId);
+        let blockedUsers = await blockedData.map({blocked_user} = blocked_user);
+        return await data.filter((e) => blocked_user.includes(e.id));
+    } catch (error) {
+        console.log(error);
+        return Error (error);
+    }
+    
 }
 
 const addSexPref = (preference) => {
@@ -84,10 +94,12 @@ const filterProfiles = async (req, res) => {
     });
 
     if (radius && radius != undefined)
-        profiles = filterLocation(radius, profiles, userData.location);
+        profiles = await filterLocation(radius, profiles, userData.location);
 
     if (interests && interests != undefined)
-        profiles = filterInterests(interests, profiles);
+        profiles = await filterInterests(interests, profiles);
+    
+    profiles = await filterBlocked(req.user._id, profiles);
 
     res.send(200).send({success : true, data : profiles , message : " Profiles filtered successfully"});
 }
