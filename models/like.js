@@ -17,9 +17,9 @@ class Like{
         )
         .then(async (data) => {
             if (data.length == 0)
-                return await res.status(400).send({success : true, message : `like not created`});
+                return await res.status(400).send({success : false, message : `like not created`});
             else
-            return await res.status(200).send({success : false, message : `like id : ${data[0].id} created`});
+            return await res.status(200).send({success : true, message : `like id : ${data[0].id} created`});
         });       
       } catch (err) {
           console.log('Error in model Like.createLike()');

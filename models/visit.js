@@ -19,7 +19,7 @@ class Visit{
             if (data.length == 0)
                 return await res.status(400).send({success : false, message : `visit not created`});
             else
-            return await res.status(200).send({success : false, message : `visit id : ${data[0].id} created`});
+            return await res.status(200).send({success : true, message : `visit id : ${data[0].id} created`});
         });       
       } catch (err) {
           console.log('Error in model Visit.createVisit()');

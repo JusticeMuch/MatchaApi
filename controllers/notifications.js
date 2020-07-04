@@ -9,12 +9,14 @@ const {db, pgp} = require('../db');
 const {Like} = require('../models/like');
 const {Visit} = require('../models/visit');
 const {Block} = require('../models/block');
+const {Match} = require('../models/match');
 const request = require('request');
 const {getBy, getFiltered, updateById, checkField} = require('../middleware/generic_methods');
 require('dotenv').config();
 const like = new Like();
 const visit = new Visit();
 const block = new Block();
+const match = new Match();
 
 const schemaLike = Joi.object({
     liked_user : Joi.number().required(),
@@ -38,15 +40,20 @@ const likeCreate = async (req, res) => {
    const {liked_user, date} = req.body;
    const liking_user = req.user._id;
 
+   const likeback = await like.getLike(liked_user, liking_user);
+   if (likeback.length > 0){
+       await match.createMatch({user1 : liked_user, user2 : liking_user})
+   }
+
    return await like.createLike(req, res, {liked_user, liking_user, date});
 }
 
 const visitCreate = async (req, res) => {
-    const {error} =  await schemaLike.validate(req.body);
+    const {error} =  await schemaVisit.validate(req.body);
     if (error) return res.status(400).send({success : false, Error : error.details});
 
     const {visited , date} = req.body;
-    const {visitor} = req.user._id;
+    const visitor = req.user._id;
 
     return await visit.createVisit(req, res, {visitor, visited, date});
 }

@@ -7,7 +7,7 @@ sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 const jwt = require('jsonwebtoken');
 
 class Match{
-    async createMatch(req, res, object){
+    async createMatch(object){
         const {user1, user2, date} = object;
       try{
         return await db
@@ -17,13 +17,13 @@ class Match{
         )
         .then(async (data) => {
             if (data.length == 0)
-                return await res.status(400).send({success : false, message : `match not created`});
+                return Error("Insertion into match table failed");
             else
-            return await res.status(200).send({success : true, message : `match id : ${data[0].id} created`});
+            return data[0];
         });       
       } catch (err) {
           console.log('Error in model Match.createMatch()');
-        return res.status(400).send({ success: false, error: err.message });
+        return Error(err);
       }
     }
 

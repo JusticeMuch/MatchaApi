@@ -43,7 +43,8 @@ CREATE TABLE IF NOT EXISTS public."Report" (
     reported_user integer NOT NULL,
     reason text NOT NULL,
     date timestamp without time zone NOT NULL,
-    suspended boolean DEFAULT false NOT NULL
+    suspended boolean DEFAULT false NOT NULL,
+    UNIQUE (reporting_user, reported_user)
 );
 
 
@@ -53,7 +54,8 @@ CREATE TABLE IF NOT EXISTS public."Like" (
     id integer DEFAULT nextval('public.like_seq') NOT NULL,
     liked_user integer NOT NULL,
     liking_user integer NOT NULL,
-    date timestamp without time zone NOT NULL
+    date timestamp without time zone NOT NULL,
+    UNIQUE (liked_user, liking_user)
 );
 
 
@@ -63,7 +65,8 @@ CREATE TABLE IF NOT EXISTS public."Block" (
     id integer DEFAULT nextval('public.block_seq') NOT NULL,
     blocking_user integer NOT NULL,
     blocked_user integer NOT NULL,
-    date timestamp without time zone NOT NULL
+    date timestamp without time zone NOT NULL,
+    UNIQUE (blocking_user, blocked_user)
 );
 
 
@@ -91,7 +94,8 @@ CREATE TABLE IF NOT EXISTS public."Match" (
     id integer DEFAULT nextval('public.match_seq') NOT NULL,
     user1 integer NOT NULL,
     user2 integer NOT NULL,
-    date timestamp without time zone NOT NULL
+    date timestamp without time zone NOT NULL,
+    UNIQUE (user1, user2)
 );
 
 

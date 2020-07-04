@@ -39,7 +39,7 @@ mongoose
   useUnifiedTopology: true
 })
 .then(async () => {
-  // await db.any(new QueryFile('MatchaApi/matcha.pgsql'));
+  await db.any(new QueryFile('MatchaApi/matcha.pgsql'));
   await app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}.`);
   });
