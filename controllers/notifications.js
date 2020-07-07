@@ -9,6 +9,8 @@ const {db, pgp} = require('../db');
 const {Like} = require('../models/like');
 const {Visit} = require('../models/visit');
 const {Block} = require('../models/block');
+const {Profile} = require('../models/profiles');
+const {Message} = require('../models/message');
 const {Match} = require('../models/match');
 const request = require('request');
 const {getBy, getFiltered, updateById, checkField} = require('../middleware/generic_methods');
@@ -16,6 +18,8 @@ require('dotenv').config();
 const like = new Like();
 const visit = new Visit();
 const block = new Block();
+const profile = new Profile();
+const message = new Message();
 const match = new Match();
 
 const schemaLike = Joi.object({
@@ -33,18 +37,20 @@ const schemaBlock = Joi.object({
     date : Joi.string().required(),
 })
 
-const likeCreate = async (req, res) => {
+const schemaMessage = Joi.object({
+    match_id : Joi.number().required(),
+    date : Joi.string().required(),
+    content : Joi.string().required()
+})
+
+const likeCreate = async (req, res) => { // add match creation 
    const {error} =  await schemaLike.validate(req.body);
    if (error) return res.status(400).send({success : false, Error : error.details});
 
    const {liked_user, date} = req.body;
    const liking_user = req.user._id;
 
-   const likeback = await like.getLike(liked_user, liking_user);
-   if (likeback.length > 0){
-       await match.createMatch({user1 : liked_user, user2 : liking_user})
-   }
-
+   
    return await like.createLike(req, res, {liked_user, liking_user, date});
 }
 
@@ -66,7 +72,36 @@ const blockCreate = async (req, res) => {
     const {blocked_user, date} = req.body;
     const blocking_user = req.user._id;
 
+    await profile.updatePopularity(liked_user, -10);
     return await block.createBlock(req, res, {blocked_user, blocking_user, date});
 }
 
-module.exports = {likeCreate, visitCreate, blockCreate}
+const messageCreate =  async (req, res) => {
+    const {error} = schemaBlock.validate(req.body);
+    if (error) return res.status(400).send({success : false, Error : error.details});
+
+    const {match_id, creationDate, content} = req.body;
+    const author = req.user._id;
+
+    return await message.createMessage(req, res, {match_id, author, content, date});
+}
+
+const updateRead = async (req, res) => {
+    const {id} = req.body;
+    if (!id || id == undefined)
+        return res.status(400).send({success : false, Error : "ID field is empty or undefined"});
+
+    try {
+        await message.updateRead(id);
+        return res.status(200).send({success : true, message : "Message updated as read"})
+    } catch (error) {
+        console.log(error);
+        return res.status(400).send({success : false, Error : error});
+    }
+}
+const messageGet = message.getMessages;
+const likesGet = like.getLikes;
+const visitsGet = visit.getVisits;
+const matchesGet = match.getMatches;
+
+module.exports = {likeCreate, visitCreate, blockCreate, updateRead, messageGet, likesGet, visitsGet, matchesGet, messageCreate}

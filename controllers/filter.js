@@ -59,7 +59,11 @@ const addSexPref = (preference) => {
 }
 
 const addAgePreference = (obj) => {
-    return (`AND WHERE age BETWEEN ${obj.min} AND ${obj.max} `);
+    let dateMin = new Date();
+    let dateMax = new Date();
+    dateMax.setFullYear(dateMax.getFullYear() - obj.max);
+    dateMin.setFullYear(dateMin.getFullYear() - obj.min);
+    return (`AND WHERE age BETWEEN ${dateMin} AND ${dateMax}`);
 }
 
 const addPopularityPreference = (obj) => {
@@ -87,7 +91,7 @@ const filterProfiles = async (req, res) => {
     if (!userData || userData === undefined)
         return res.status(400).send({success : false, Error : "Error in getting user data"});
 
-    profiles = await db.any(buildFilterStr(req.body)).then((data) => {
+    profiles = await db.any(buildFilterStr(req.body) + `AND WHERE sexual_preference = ${userData.gender}`).then((data) => {
         if (!data || data === undefined)
             return res.status(400).send({success : false, Error : "Error in getting profiles"});
         return data;

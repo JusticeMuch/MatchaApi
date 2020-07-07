@@ -1,4 +1,6 @@
 
+DROP SCHEMA IF EXISTS public CASCADE;
+
 CREATE SCHEMA IF NOT EXISTS public AUTHORIZATION jronald;
 
 CREATE SEQUENCE IF NOT EXISTS public.block_seq
@@ -9,6 +11,13 @@ CREATE SEQUENCE IF NOT EXISTS public.block_seq
     CACHE 1;
 
 CREATE SEQUENCE IF NOT EXISTS public.like_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    MAXVALUE 99999999
+    CACHE 1;
+
+CREATE SEQUENCE IF NOT EXISTS public.token_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
@@ -124,7 +133,7 @@ CREATE TABLE IF NOT EXISTS public."Message" (
     match_id integer NOT NULL,
     author integer NOT NULL,
     content character varying NOT NULL,
-    "creationDate" timestamp without time zone NOT NULL,
+    date timestamp without time zone NOT NULL,
     read boolean DEFAULT false NOT NULL
 );
 

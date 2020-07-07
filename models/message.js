@@ -12,7 +12,7 @@ class Message{
       try{
         return await db
         .any(
-          'INSERT INTO public."Message" (match_id, author, content, creationDate) VALUES ($1, $2, $3, $4) RETURNING id',
+          'INSERT INTO public."Message" (match_id, author, content, date) VALUES ($1, $2, $3, $4) RETURNING id',
           [match_id, author, content, creationDate],
         )
         .then(async (data) => {
@@ -27,7 +27,7 @@ class Message{
       }
     }
 
-    async getMessages(match_id){
+    async getMessagesById(match_id){
         try {
             return await db.any(`SELECT author, content, date FROM public."Message" WHERE match_id = $1`,
             [match_id]).then(async (data) => {
@@ -62,6 +62,27 @@ class Message{
         } catch (error) {
             console.log(error);
             return Error(error);
+        }
+    }
+
+    async getMessages(req, res){
+        const {date} = req.query;
+        const user = req.user._id;
+
+        try {
+            if (!date || date == undefined){
+                return db.any(`SELECT * FROM public."Messages" WHERE match_id = (SELECT match_id FROM public."Match" WHERE user1 
+                    = ${user} OR user2 = ${user});`, [user]).then(data => {
+                        return res.send(200).send({success : true, data : data});
+                })
+            }else{
+                return db.any(`SELECT * FROM public."Messages" WHERE match_id = (SELECT match_id FROM public."Match" WHERE user1 
+                        = ${user} OR user2 = ${user}) AND date > $2;`, [liked_user, date]).then(data => {
+                            return res.send(200).send({success : true, data : data});
+                });
+            }
+        } catch (error) {
+            return res.status(400).send({success : false, Error : error});
         }
     }
 }

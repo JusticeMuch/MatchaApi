@@ -52,6 +52,27 @@ class Visit{
             return Error(error);
         }
     }
+
+    async getVisits(req, res){
+        const {date} = req.query;
+        const visited = req.user._id;
+
+        try {
+            if (!date || date == undefined){
+                return db.any(`SELECT * FROM public."Visit" WHERE visited = $1`, [visited]).then(data => {
+                    return res.send(200).send({success : true, data : data});
+                })
+            }else{
+                return db.any(`SELECT * FROM public."Visit" WHERE visited = $1 AND date > $2`, [visited, date]).then(data => {
+                    return res.send(200).send({success : true, data : data});
+                });
+            }
+        } catch (error) {
+            return res.status(400).send({success : false, Error : error});
+        }
+    }
+
+    
 }
 
 module.exports = {Visit}

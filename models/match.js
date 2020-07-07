@@ -41,6 +41,25 @@ class Match{
         return Error("Something when wrong in match.getMatch()");
         }
     }
+
+    async getMatches(req, res){
+        const {date} = req.query;
+        const user = req.user._id;
+
+        try {
+            if (!date || date == undefined){
+                return db.any(`SELECT * FROM public."Match" WHERE user1 = $1 OR user2 = $1`, [user]).then(data => {
+                    return res.send(200).send({success : true, data : data});
+                })
+            }else{
+                return db.any(`SELECT * FROM public."Match" WHERE user1 = $1 OR user2 = $1 AND date > $2`, [user, date]).then(data => {
+                    return res.send(200).send({success : true, data : data});
+                });
+            }
+        } catch (error) {
+            return res.status(400).send({success : false, Error : error});
+        }
+    }
 }
 
 module.exports = {Match}
