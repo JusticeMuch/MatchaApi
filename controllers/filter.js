@@ -1,6 +1,6 @@
 const {db, pgp} = require('../db');
 const Joi = require('@hapi/joi');
-const Block = require('../models/block');
+const {Block} = require('../models/block');
 const block = new Block();
 const {getBy, getFiltered, updateById, checkField} = require('../middleware/generic_methods');
 
@@ -18,13 +18,13 @@ const schema = Joi.object({
     radius : Joi.number()
 })
 
-const filter = {
-    sexual_preference : both, //male , female, both
-    age : {min : null, max : null},
-    interests : [],
-    popularity : {min : null, max : null},
-    radius : null
-}
+// const filter = {
+//     sexual_preference : both,
+//     age : {min : null, max : null},
+//     interests : [],
+//     popularity : {min : null, max : null},
+//     radius : null
+// }
 
 const filterInterests = (interests, data) => {
     return data.filter(elem => interests.every(el => elem.interests.includes(el)));
@@ -42,8 +42,11 @@ const filterLocation = (radius, data, userLoc) => {
 const filterBlocked = async (userId, data) => {
     try {
         blockedData = await block.getBlock(userId);
-        let blockedUsers = await blockedData.map({blocked_user} = blocked_user);
-        return await data.filter((e) => blocked_user.includes(e.id));
+        if (blockedData && blockedData != undefined){
+           let blockedUsers = await blockedData.map({blocked_user} = blocked_user);
+           return await data.filter((e) => blocked_user.includes(e.id)); 
+        }
+        return data;
     } catch (error) {
         console.log(error);
         return Error (error);
@@ -53,9 +56,9 @@ const filterBlocked = async (userId, data) => {
 
 const addSexPref = (preference) => {
     if (preference == 'both' || !preference || preference === undefined)
-        return ('WHERE gender = "male" AND gender = "female" ')
+        return (" WHERE (gender = 'male' OR gender = 'female')")
     else
-        return (`WHERE gender = "${preference}" `);
+        return (` WHERE gender = '${preference}'`);
 }
 
 const addAgePreference = (obj) => {
@@ -63,14 +66,15 @@ const addAgePreference = (obj) => {
     let dateMax = new Date();
     dateMax.setFullYear(dateMax.getFullYear() - obj.max);
     dateMin.setFullYear(dateMin.getFullYear() - obj.min);
-    return (`AND WHERE age BETWEEN ${dateMin} AND ${dateMax}`);
+    return (` AND birthdate BETWEEN '${dateMax.toISOString().replace('T', ' ').substr(0, 10)}' AND '${dateMin.toISOString().replace('T', ' ').substr(0, 10)}'`);
 }
 
 const addPopularityPreference = (obj) => {
-    return (`AND WHERE popularity BETWEEN ${obj.min} AND ${obj.max} `);
+    return (` AND popularity BETWEEN ${obj.min} AND ${obj.max}`);
 }
 
-const buildFilterStr = (obj) => {
+const buildFilterStr = (obj, user) => {
+    console.log(obj);
     const {sexual_preference, age, popularity} = obj;
     let sqlStr = `SELECT * FROM public."Profile" `;
     sqlStr += addSexPref(sexual_preference);
@@ -78,10 +82,12 @@ const buildFilterStr = (obj) => {
         sqlStr += addAgePreference(age);
     if (popularity && popularity != undefined)
         sqlStr += addPopularityPreference(popularity);
+    sqlStr +=` AND sexual_preference = '${user.gender}'`
     return sqlStr; 
 }
 
-const filterProfiles = async (req, res) => {
+module.exports =  filterProfiles = async (req, res) => {
+    console.log(req.body);
     const{error} = await schema.validate(req.body);
     if (error) return res.status(400).send({success : false , Error : error.details});
 
@@ -91,7 +97,8 @@ const filterProfiles = async (req, res) => {
     if (!userData || userData === undefined)
         return res.status(400).send({success : false, Error : "Error in getting user data"});
 
-    profiles = await db.any(buildFilterStr(req.body) + `AND WHERE sexual_preference = ${userData.gender}`).then((data) => {
+    console.log(await buildFilterStr(req.body, userData));
+    profiles = await db.any(await buildFilterStr(req.body, userData)).then((data) => {
         if (!data || data === undefined)
             return res.status(400).send({success : false, Error : "Error in getting profiles"});
         return data;
@@ -105,5 +112,5 @@ const filterProfiles = async (req, res) => {
     
     profiles = await filterBlocked(req.user._id, profiles);
 
-    res.send(200).send({success : true, data : profiles , message : " Profiles filtered successfully"});
+    res.status(200).send({success : true, data : profiles , message : " Profiles filtered successfully"});
 }

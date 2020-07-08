@@ -25,6 +25,9 @@ let data = JSON.parse(fs.readFileSync('users.json'));
 // fs.writeFileSync('users.json', JSON.stringify(data));
 module.exports = function insertDummyProfiles(){
     cs = new pgp.helpers.ColumnSet([
+        'profile_picture',
+        'last_visit',
+        'description',
         'firstname',
         'lastname',
         'username',
