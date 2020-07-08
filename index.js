@@ -11,6 +11,7 @@ const notificationRoute = require('./routes/notifications');
 const app = express();
 const authRoute = require('./routes/auth');
 const {db, pgp} = require('./db');
+const insertUserProfiles = require('./test');
 const QueryFile = pgp.QueryFile;
 
 
@@ -40,8 +41,10 @@ mongoose
   useUnifiedTopology: true
 })
 .then(async () => {
-  // await db.any(new QueryFile('matcha.pgsql'));
-  // Token.collection.drop();
+  await db.any(new QueryFile('matcha.pgsql'));
+  Token.collection.drop();
+  await insertUserProfiles();
+
   await app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}.`);
   });
