@@ -13,8 +13,10 @@ class Report{
     async createReport(req, res){
 
         const {error} = schema.validate(req.body);
+        if (error) return res.status(400).send({success : false, Error : error.details});
+
         const reporting_user = req.user._id;
-        const{reported_user, reason, date} = data;
+        const{reported_user, reason, date} = req.body;
 
         return await db.any(
           'INSERT INTO public."Report" (reporting_user, reported_user, reason, date) VALUES ($1, $2, $3, $4) RETURNING id',
@@ -27,8 +29,8 @@ class Report{
 
     async suspendUser(req, res){
         const {username, password, userId} = req.body;
-        if (!username || !password || userId)
-            res.status(400).send({success: false, Error : "Fields are blank"});
+        if (!username || !password || !userId)
+            return res.status(400).send({success: false, Error : "Fields are blank"});
         
             return await getFiltered("Admin", "username", username,"password, id").then(
                 async (data) =>{

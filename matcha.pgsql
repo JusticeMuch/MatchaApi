@@ -335,5 +335,4 @@ ALTER TABLE ONLY public."Visit"
 CREATE TABLE IF NOT EXISTS public."Admin" (
     id integer PRIMARY KEY NOT NULL,
     username text NOT NULL,
-    password text NOT NULL,
-);
+    password text NOT NULL);

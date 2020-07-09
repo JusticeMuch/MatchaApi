@@ -1,5 +1,6 @@
 const fs = require('fs');
 const {db, pgp} = require('./db');
+const bcrypt = require('bcrypt');
 
 require('dotenv').config();
 let data = JSON.parse(fs.readFileSync('users.json'));
