@@ -49,14 +49,27 @@ class Match{
         try {
             if (!date || date == undefined){
                 return db.any(`SELECT * FROM public."Match" WHERE user1 = $1 OR user2 = $1`, [user]).then(data => {
-                    return res.send(200).send({success : true, data : data});
+                    return res.status(200).send({success : true, data : data});
                 })
             }else{
                 return db.any(`SELECT * FROM public."Match" WHERE user1 = $1 OR user2 = $1 AND date > $2`, [user, date]).then(data => {
-                    return res.send(200).send({success : true, data : data});
+                    return res.status(200).send({success : true, data : data});
                 });
             }
         } catch (error) {
+            return res.status(400).send({success : false, Error : error});
+        }
+    }
+
+    async checkNumberMatches(req, res){
+        const id = req.user._id;
+        try {
+            return await db.any(`SELECT COUNT(id) FROM public."Match" WHERE user1 = $1 OR user2 = $1`,
+                [id]).then(data => {
+                    return res.status(200).send({success : true, data : data});
+                });
+        } catch (error) {
+            console.log(error);
             return res.status(400).send({success : false, Error : error});
         }
     }

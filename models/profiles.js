@@ -44,7 +44,7 @@ class Profile{
 
     async updatePopularity(id, popularity){
       console.log(id + popularity);
-      return await db.any(`UPDATE public."Profile" SET popularity = popularity + ${popularity} WHERE id = $1`, [id]).then(
+      return await db.any(`UPDATE public."Profile" SET popularity = popularity + '${popularity}' WHERE id = $1`, [id]).then(
         data => {
           return data;
         }).catch(err => {

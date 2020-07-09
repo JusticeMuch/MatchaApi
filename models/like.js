@@ -37,21 +37,21 @@ class Like{
         )
         .then(async (data) => {
             console.log(data);
-            if ((await data).length == 0)
-                return await res.status(400).send({success : false, message : `like not created`});
+            if (!data && data.length == 0)
+                return await res.status(400).send({success : false, message : `like not created` , like_id : null});
             else{
                 await profile.updatePopularity(liked_user, 1);
                 const likeback = await this.getLike(liked_user, liking_user);
                 // console.log(likeback);
-                if (likeback.length > 0){
+                if (likeback && likeback.length > 0){
                     const mat = (await match.createMatch({user1 : liked_user, user2 : liking_user, date}))
                     await profile.updatePopularity(liked_user, 5);
                     if(mat)
-                         res.status(200).send({success : true, data :{ match_id : mat.id }});
+                         res.status(200).send({success : true, like_id : data[0].id , match_id : mat.id });
                      else
                          res.status(400).send({success : false, Error : "Like created , but error in creating match"});
                 }
-                return await res.status(200).send({success : true, message : `like id : ${data[0].id} created`});
+                return await res.status(200).send({success : true, like_id: data[0], match_id : null});
             }
         });       
       } catch (err) {
@@ -75,6 +75,19 @@ class Like{
                 });
             }
         } catch (error) {
+            return res.status(400).send({success : false, Error : error});
+        }
+    }
+
+    async checkNumberLikes(req, res){
+        const id = req.user._id;
+        try {
+            return await db.any(`SELECT COUNT(id) FROM public."Like" WHERE liking_user = $1`,
+                [id]).then(data => {
+                    return res.status(200).send({success : true, data : data});
+                });
+        } catch (error) {
+            console.log(error);
             return res.status(400).send({success : false, Error : error});
         }
     }

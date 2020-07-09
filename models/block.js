@@ -41,6 +41,19 @@ class Block{
         return Error("Something when wrong in block.getBlock()");
         }
     }
+
+    async checkNumberBlocks(req, res){
+        const id = req.user._id;
+        try {
+            return await db.any(`SELECT COUNT(id) FROM public."Block" WHERE blocking_user = $1`,
+                [id]).then(data => {
+                    return res.status(200).send({success : true, data : data});
+                });
+        } catch (error) {
+            console.log(error);
+            return res.status(400).send({success : false, Error : error});
+        }
+    }
 }
 
 module.exports = {Block}

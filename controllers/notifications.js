@@ -72,15 +72,15 @@ const blockCreate = async (req, res) => {
     const {blocked_user, date} = req.body;
     const blocking_user = req.user._id;
 
-    await profile.updatePopularity(liked_user, -10);
+    await profile.updatePopularity(blocked_user, -10);
     return await block.createBlock(req, res, {blocked_user, blocking_user, date});
 }
 
 const messageCreate =  async (req, res) => {
-    const {error} = schemaBlock.validate(req.body);
+    const {error} = schemaMessage.validate(req.body);
     if (error) return res.status(400).send({success : false, Error : error.details});
 
-    const {match_id, creationDate, content} = req.body;
+    const {match_id, date, content} = req.body;
     const author = req.user._id;
 
     return await message.createMessage(req, res, {match_id, author, content, date});
@@ -103,5 +103,9 @@ const messageGet = message.getMessages;
 const likesGet = like.getLikes;
 const visitsGet = visit.getVisits;
 const matchesGet = match.getMatches;
+const messageCount = message.checkNumberMessagesRead;
+const likesCount = like.checkNumberLikes;
+const matchesCount = match.checkNumberMatches;
 
-module.exports = {likeCreate, visitCreate, blockCreate, updateRead, messageGet, likesGet, visitsGet, matchesGet, messageCreate}
+module.exports = {likeCreate, visitCreate, blockCreate, updateRead, messageGet, likesGet, visitsGet, matchesGet, messageCreate,
+                    messageCount, likesCount, matchesCount}

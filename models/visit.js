@@ -19,7 +19,7 @@ class Visit{
             if (data.length == 0)
                 return await res.status(400).send({success : false, message : `visit not created`});
             else
-            return await res.status(200).send({success : true, message : `visit id : ${data[0].id} created`});
+                return await res.status(200).send({success : true, message : `visit id : ${data[0].id} created`});
         });       
       } catch (err) {
           console.log('Error in model Visit.createVisit()');
@@ -60,11 +60,11 @@ class Visit{
         try {
             if (!date || date == undefined){
                 return db.any(`SELECT * FROM public."Visit" WHERE visited = $1`, [visited]).then(data => {
-                    return res.send(200).send({success : true, data : data});
+                    return res.status(200).send({success : true, data : data});
                 })
             }else{
                 return db.any(`SELECT * FROM public."Visit" WHERE visited = $1 AND date > $2`, [visited, date]).then(data => {
-                    return res.send(200).send({success : true, data : data});
+                    return res.status(200).send({success : true, data : data});
                 });
             }
         } catch (error) {

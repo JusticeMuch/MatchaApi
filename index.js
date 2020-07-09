@@ -26,7 +26,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use('/api/auth', authRoute);
 app.use('/api/profile' ,authToken, profileRoute);
-app.use('/api/notification', authToken, notificationRoute);
+app.use('/api', authToken, notificationRoute);
 // app.use('/api/profile', authToken, profileRoute); route with authentication
 
 
@@ -41,9 +41,9 @@ mongoose
   useUnifiedTopology: true
 })
 .then(async () => {
-  await db.any(new QueryFile('matcha.pgsql'));
-  Token.collection.drop();
-  await insertUserProfiles();
+  // await db.any(new QueryFile('matcha.pgsql'));
+  // Token.collection.drop();
+  // await insertUserProfiles();
 
   await app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}.`);
