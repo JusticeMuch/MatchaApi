@@ -331,3 +331,9 @@ ALTER TABLE ONLY public."Visit"
 
 ALTER TABLE ONLY public."Visit"
     ADD CONSTRAINT "fk_Visit_visitor" FOREIGN KEY (visitor) REFERENCES public."Profile"(id);
+
+CREATE TABLE IF NOT EXISTS public."Admin" (
+    id integer PRIMARY KEY NOT NULL,
+    username text NOT NULL,
+    password text NOT NULL,
+);

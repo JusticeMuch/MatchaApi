@@ -1,5 +1,7 @@
 const fs = require('fs');
 const {db, pgp} = require('./db');
+
+require('dotenv').config();
 let data = JSON.parse(fs.readFileSync('users.json'));
 
 // let i = ['chess', 'draught', 'swimming', 'hiking', 'running', 'running away', 'chasing', 'checkers', 'football', 'kamasutra', 'manga', 'anime', 'culture', 'it', 'cricket', 'gyming', 'fitness', 'rugby', 'youtube', 'reddit', 'facebook', 'selfies', 'mindgames', 'poledance', 'dance', 'tennis', 'programming', 'torrenting', 'throwing', 'limping', 'chasing Carl with a cane', 'jogging', 'student', 'flying', 'unemployed', 'need money', 'for hire', 'on sale', 'discount price', 'clearance sale', 'month to live']
@@ -23,7 +25,14 @@ let data = JSON.parse(fs.readFileSync('users.json'));
 
 
 // fs.writeFileSync('users.json', JSON.stringify(data));
-module.exports = function insertDummyProfiles(){
+module.exports = async function insertDummyProfiles(){
+    const salt = await bcrypt.genSalt(10);
+    const hash = await bcrypt.hash(process.env.PG_PASSWORD, salt);
+
+    await db.any(
+        'INSERT INTO public."Admin" (id, username, password) VALUES ($1, $2, $3) RETURNING id',
+        [process.env.ADMIN_ID, process.env.PG_USERNAME, hash],).then().catch(err => console.log(err));
+
     cs = new pgp.helpers.ColumnSet([
         'profile_picture',
         'last_visit',
@@ -41,11 +50,11 @@ module.exports = function insertDummyProfiles(){
         'popularity',
         'gender',
         'authenticated'
-    ], {table: {schema : 'public', table : 'Profile'}});
+    ], { table: { schema: 'public', table: 'Profile' } });
 
-    const insert = pgp.helpers.insert(data, cs);
+    const insert =pgp.helpers.insert(data, cs);
 
-    db.none(insert)
+    await db.none(insert)
         .then(() => {
             console.log("Working")
         })
@@ -53,3 +62,4 @@ module.exports = function insertDummyProfiles(){
             console.log(error);
         });
 }
+
