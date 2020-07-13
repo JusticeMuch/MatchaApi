@@ -302,5 +302,7 @@ const updateLocation = async (req, res) => {
     });
 }
 
+const getAllProfiles = prof.getAllProfiles;
+
 module.exports = {register, login, sendTokenPost, validateToken, resetPassword, changePassword, updateUsers, uploadImage,
-     deleteImage, getProfileData, updateLocation}
+     deleteImage, getProfileData, updateLocation, getAllProfiles}

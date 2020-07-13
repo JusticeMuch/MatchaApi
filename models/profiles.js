@@ -52,6 +52,17 @@ class Profile{
           return Error(err);
         })
     }
+
+    async getAllProfiles(req, res){
+      try {
+        db.any(`SELECT * FROM "Profile"`).then(async data => {
+          await data.forEach(e => delete e.password);
+          return await res.send({success : true, data : data});
+        });
+      } catch (error) {
+        return res.status(400).send({success : false, Error : error});
+      }
+    }
 }
 
 module.exports = {Profile}
