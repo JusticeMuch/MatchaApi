@@ -33,7 +33,7 @@ const filterInterests = (interests, data) => {
 const filterLocation = (radius, data, userLoc) => {
     let result = [];
     data.forEach(elem => {
-        if (Math.sqrt(Math.pow(elem.location[0] - userLoc[0], 2) + Math.pow(elem.location[1] - userLoc[1], 2)) <= radius)
+        if (Math.sqrt(Math.pow(elem.location[0] - userLoc[0], 2) + Math.pow(elem.location[1] - userLoc[1], 2)) <= (radius/ 110.4))
             result.push(elem);
     })
     return result;
