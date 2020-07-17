@@ -52,7 +52,7 @@ const likeCreate = async (req, res) => { // add match creation
    const liking_user = req.user._id;
 
    try {
-       await emitNotification(createNotification('like', liking_user, liked_user, null));
+       await emitNotification(liked_user, createNotification('like', liking_user, liked_user, null));
        await profile.updatePopularity(blocked_user, 5);
        return await like.createLike(req, res, {liked_user, liking_user, date});
    } catch (error) {
@@ -69,7 +69,7 @@ const visitCreate = async (req, res) => {
     const visitor = req.user._id;
 
     try {
-        await emitNotification(createNotification('visit', visitor, visited, null));
+        await emitNotification(visited, createNotification('visit', visitor, visited, null));
         await profile.updatePopularity(blocked_user, 2);
         return await visit.createVisit(req, res, {visitor, visited, date});
     } catch (error) {
@@ -88,7 +88,7 @@ const blockCreate = async (req, res) => {
     
 
     try {
-        await emitNotification(createNotification('block', blocked_user, blocking_user, null));
+        await emitNotification(blocking_user, createNotification('block', blocked_user, blocking_user, null));
         await profile.updatePopularity(blocked_user, -10);
         return await block.createBlock(req, res, {blocked_user, blocking_user, date});
     } catch (error) {
