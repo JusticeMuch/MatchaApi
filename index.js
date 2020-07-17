@@ -12,11 +12,12 @@ const app = express();
 const socketio = require('socket.io');
 const http = require('http');
 const server = http.createServer(app);
-module.exports.io = socketio(server);
+const io = socketio(server);
 const authRoute = require('./routes/auth');
 const {db, pgp} = require('./db');
 const insertUserProfiles = require('./init');
 const QueryFile = pgp.QueryFile;
+global.io = io;
 
 
 const PORT = process.env.PORT || 8080;
@@ -58,3 +59,4 @@ mongoose
   console.log("Cannot connect to the database!", err);
   process.exit();
 });
+

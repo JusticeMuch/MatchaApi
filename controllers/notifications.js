@@ -14,6 +14,7 @@ const {Message} = require('../models/message');
 const {Match} = require('../models/match');
 const request = require('request');
 const {getBy, getFiltered, updateById, checkField} = require('../middleware/generic_methods');
+const {createMessage, createNotification, emitMessage, emitNotification} = require('../socket');
 require('dotenv').config();
 const like = new Like();
 const visit = new Visit();
@@ -50,8 +51,14 @@ const likeCreate = async (req, res) => { // add match creation
    const {liked_user, date} = req.body;
    const liking_user = req.user._id;
 
+   try {
+       await emitNotification(createNotification('like', liking_user, liked_user, null));
+       await profile.updatePopularity(blocked_user, 5);
+       return await like.createLike(req, res, {liked_user, liking_user, date});
+   } catch (error) {
+       return res.status(400).send({success : false, Error : error});
+   }
    
-   return await like.createLike(req, res, {liked_user, liking_user, date});
 }
 
 const visitCreate = async (req, res) => {
@@ -61,7 +68,13 @@ const visitCreate = async (req, res) => {
     const {visited , date} = req.body;
     const visitor = req.user._id;
 
-    return await visit.createVisit(req, res, {visitor, visited, date});
+    try {
+        await emitNotification(createNotification('visit', visitor, visited, null));
+        await profile.updatePopularity(blocked_user, 2);
+        return await visit.createVisit(req, res, {visitor, visited, date});
+    } catch (error) {
+        return res.status(400).send({success : false, Error : error});
+    }
 }
 
 const blockCreate = async (req, res) => {
@@ -72,8 +85,15 @@ const blockCreate = async (req, res) => {
     const {blocked_user, date} = req.body;
     const blocking_user = req.user._id;
 
-    await profile.updatePopularity(blocked_user, -10);
-    return await block.createBlock(req, res, {blocked_user, blocking_user, date});
+    
+
+    try {
+        await emitNotification(createNotification('block', blocked_user, blocking_user, null));
+        await profile.updatePopularity(blocked_user, -10);
+        return await block.createBlock(req, res, {blocked_user, blocking_user, date});
+    } catch (error) {
+        return res.status(400).send({success : false, Error : error});
+    }
 }
 
 const messageCreate =  async (req, res) => {
@@ -83,7 +103,14 @@ const messageCreate =  async (req, res) => {
     const {match_id, date, content} = req.body;
     const author = req.user._id;
 
-    return await message.createMessage(req, res, {match_id, author, content, date});
+    try {
+        await emitMessage(match_id, createMessage(author, content));
+        return await message.createMessage(req, res, {match_id, author, content, date});
+    } catch (error) {
+        return res.status(400).send({success : false, Error : error});
+    }
+
+    
 }
 
 const updateRead = async (req, res) => {
