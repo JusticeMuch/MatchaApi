@@ -3,12 +3,16 @@ const bodyParser = require("body-parser");
 const cors = require("cors");
 const mongoose = require("mongoose");
 const Token = require('./models/token');
-const authToken = require('./middleware/verifyToken')
+const {authenticateToken} = require('./middleware/verifyToken')
 require('dotenv').config()
 const Pool = require('pg').Pool
 const profileRoute = require('./routes/profile');
 const notificationRoute = require('./routes/notifications');
 const app = express();
+const socketio = require('socket.io');
+const http = require('http');
+const server = http.createServer(app);
+module.exports.io = socketio(server);
 const authRoute = require('./routes/auth');
 const {db, pgp} = require('./db');
 const insertUserProfiles = require('./init');
@@ -16,18 +20,19 @@ const QueryFile = pgp.QueryFile;
 
 
 const PORT = process.env.PORT || 8080;
-var corsOptions = {
-  origin: "http://localhost:8081"
+const corsOptions = {
+  origin: `http://localhost:${PORT}`
 };
+require('./socket').socketConnect();
 
 app.use(cors(corsOptions));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use('/api/auth', authRoute);
-app.use('/api/profile' ,authToken, profileRoute);
-app.use('/api', authToken, notificationRoute);
-// app.use('/api/profile', authToken, profileRoute); route with authentication
+app.use('/api/profile' ,authenticateToken, profileRoute);
+app.use('/api', authenticateToken, notificationRoute);
+// app.use('/api/profile', authenticateToken, profileRoute); route with authentication
 
 
 app.get("/", (req, res) => {
@@ -45,7 +50,7 @@ mongoose
   Token.collection.drop();
   await insertUserProfiles();
 
-  await app.listen(PORT, () => {
+  await server.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}.`);
   });
 })

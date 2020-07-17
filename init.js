@@ -57,7 +57,7 @@ module.exports = async function insertDummyProfiles(){
 
     await db.none(insert)
         .then(() => {
-            console.log("Working")
+            console.log("Dummy profiles inserted")
         })
         .catch(error => {
             console.log(error);
