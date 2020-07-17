@@ -6,6 +6,7 @@ const {Profile} = require('../models/profiles');
 const {Match} = require('../models/match');
 const sgMail = require('@sendgrid/mail');
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+const {createNotification, emitNotification} = require('../socket');
 const jwt = require('jsonwebtoken');
 const match = new Match();
 const profile = new Profile();
@@ -44,7 +45,10 @@ class Like{
                 const likeback = await this.getLike(liked_user, liking_user);
                 // console.log(likeback);
                 if (likeback && likeback.length > 0){
-                    const mat = (await match.createMatch({user1 : liked_user, user2 : liking_user, date}))
+                    const mat = (await match.createMatch({user1 : liked_user, user2 : liking_user, date}));
+                    await emitNotification(createNotification('match', liked_user, liking_user, null));
+                    await emitNotification(createNotification('match', liking_user, liked_user, null));
+
                     await profile.updatePopularity(liked_user, 5);
                     if(mat)
                          res.status(200).send({success : true, like_id : data[0].id , match_id : mat.id });
