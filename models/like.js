@@ -46,8 +46,8 @@ class Like{
                 // console.log(likeback);
                 if (likeback && likeback.length > 0){
                     const mat = (await match.createMatch({user1 : liked_user, user2 : liking_user, date}));
-                    await emitNotification(createNotification('match', liked_user, liking_user, null));
-                    await emitNotification(createNotification('match', liking_user, liked_user, null));
+                    await emitNotification(liked_user, createNotification('match', liked_user, liking_user, null));
+                    await emitNotification(liking_user, createNotification('match', liking_user, liked_user, null));
 
                     await profile.updatePopularity(liked_user, 5);
                     if(mat)
