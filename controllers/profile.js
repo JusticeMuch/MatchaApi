@@ -120,7 +120,7 @@ const login = async (req, res) =>{
 
     const {email, password} = req.body;
 
-    return await getFiltered("Profile", "email", email,"authenticated, password, id").then(
+    return await getFiltered("Profile", "email", email,"authenticated, password, suspended, id").then(
       async (data) =>{
         const valid = await bcrypt.compare(password, data[0].password);
 
@@ -128,6 +128,8 @@ const login = async (req, res) =>{
             return res.status(400).send({success : false, Error : "No such user is on system"});
         else if (!data[0].authenticated)
             return res.status(400).send({success : false, Error : "Please validate email"});
+        else if (data[0].suspended)
+            return res.status(400).send({success : false, Error : "You are suspended , please contact site adminidtrator"});
         else if (!valid)
             return res.status(400).send({success : false, Error : "Invalid password"});
         else{
