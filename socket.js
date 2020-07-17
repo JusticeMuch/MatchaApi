@@ -52,17 +52,12 @@ module.exports.createNotification = (type, sender, receiver, content) => { //lik
 module.exports.socketConnect = async () =>{
     io.on("connection", async socket => {  
         await addConnection(socket);
-        // notifications like
-        setTimeout(()=> {
-            this.emitMessage(4, this.createMessage(2, "I am working man"))
-        }, 10000);
-        // join room
+    
         socket.on('joinChatroom', async (matchId) => {
             if (matchId && matchId !== undefined)
                 socket.join(matchId);
             console.log(`User ${await getUser(socket.id)} joined room ${matchId}`);
         });
-
 
         socket.on('disconnect', async () => {
             console.log('user disconnected');
