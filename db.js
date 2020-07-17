@@ -1,7 +1,6 @@
 const pgp = require('pg-promise')({});
 require('dotenv').config();
 
-console.log(process.env.PG_USERNAME);
 const settings = {
   host: '127.0.0.1',
   port: 5432,

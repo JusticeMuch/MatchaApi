@@ -53,7 +53,7 @@ const likeCreate = async (req, res) => { // add match creation
 
    try {
        await emitNotification(liked_user, createNotification('like', liking_user, liked_user, null));
-       await profile.updatePopularity(blocked_user, 5);
+       await profile.updatePopularity(liked_user, 5);
        return await like.createLike(req, res, {liked_user, liking_user, date});
    } catch (error) {
        return res.status(400).send({success : false, Error : error});
@@ -70,7 +70,7 @@ const visitCreate = async (req, res) => {
 
     try {
         await emitNotification(visited, createNotification('visit', visitor, visited, null));
-        await profile.updatePopularity(blocked_user, 2);
+        await profile.updatePopularity(visited, 2);
         return await visit.createVisit(req, res, {visitor, visited, date});
     } catch (error) {
         return res.status(400).send({success : false, Error : error});
