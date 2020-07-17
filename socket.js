@@ -26,13 +26,14 @@ module.exports.emitNotification = async (userId, notification) => {
 
 module.exports.emitMessage = async (matchId, message) => {
     if (matchId && message){
+        message.matchId = matchId;
         await io.to(matchId).emit('message', message);
     }
 }
 
-module.exports.createMessage = (author, message) => {
+module.exports.createMessage = (matchId, author, message) => {
     if (author && message)
-        return {author :author, message : message}
+        return {matchId : null, author :author, message : message}
     else{
         console.log('Error : message contents empty');
         return Error ('Message contents empty');
