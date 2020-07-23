@@ -3,10 +3,23 @@ const multer = require('multer');
 const {Report} = require('../models/report');
 const report = new Report();
 
-const {likeCreate, visitCreate, blockCreate, updateRead, likesGet, visitsGet, matchesGet, messageCreate, messageGet, messageCount, likesCount, matchesCount} = require('../controllers/notifications')
+const {
+    likeCreate,
+    visitCreate,
+    blockCreate,
+    updateRead,
+    likesGet,
+    visitsGet,
+    matchesGet,
+    messageCreate,
+    messageGet,
+    messageCount,
+    likesCount,
+    matchesCount
+} = require('../controllers/notifications')
 require('dotenv').config();
 
-router.post('/visit' , visitCreate);
+router.post('/visit', visitCreate);
 router.post('/like', likeCreate);
 router.post('/block', blockCreate);
 router.post('/message', messageCreate);

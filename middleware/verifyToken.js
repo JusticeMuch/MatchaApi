@@ -1,10 +1,9 @@
- 
 const jwt = require('jsonwebtoken');
 require('dotenv').config();
 
 function authenticateToken(req, res, next) {
     const token = req.header('auth-token');
-    if (!token)
+    if (! token) 
         return res.status(401).send("Access denied!");
 
     try {
@@ -17,18 +16,18 @@ function authenticateToken(req, res, next) {
 }
 
 async function authenticateSocketToken(token) {
-    if (!token) {
+    if (! token) {
         console.log('socket token blank');
-        return (Error('Token blank'));
+        return(Error('Token blank'));
     }
     try {
         if (token.startsWith('Bearer ')) {
             token = token.slice(7, token.length);
         }
-        return (jwt.verify(token, process.env.SECRET));
+        return(jwt.verify(token, process.env.SECRET));
     } catch (error) {
         console.log(error);
-        return (Error(error));
+        return(Error(error));
     }
 }
 

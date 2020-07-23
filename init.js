@@ -26,13 +26,13 @@ let data = JSON.parse(fs.readFileSync('users.json'));
 
 
 // fs.writeFileSync('users.json', JSON.stringify(data));
-module.exports = async function insertDummyProfiles(){
+module.exports = async function insertDummyProfiles() {
     const salt = await bcrypt.genSalt(10);
     const hash = await bcrypt.hash(process.env.PG_PASSWORD, salt);
 
-    await db.any(
-        'INSERT INTO public."Admin" (id, username, password) VALUES ($1, $2, $3) RETURNING id',
-        [process.env.ADMIN_ID, process.env.PG_USERNAME, hash],).then().catch(err => console.log(err));
+    await db.any('INSERT INTO public."Admin" (id, username, password) VALUES ($1, $2, $3) RETURNING id', [
+        process.env.ADMIN_ID, process.env.PG_USERNAME, hash
+    ],).then().catch(err => console.log(err));
 
     cs = new pgp.helpers.ColumnSet([
         'profile_picture',
@@ -51,16 +51,18 @@ module.exports = async function insertDummyProfiles(){
         'popularity',
         'gender',
         'authenticated'
-    ], { table: { schema: 'public', table: 'Profile' } });
+    ], {
+        table: {
+            schema: 'public',
+            table: 'Profile'
+        }
+    });
 
-    const insert =pgp.helpers.insert(data, cs);
+    const insert = pgp.helpers.insert(data, cs);
 
-    await db.none(insert)
-        .then(() => {
-            console.log("Dummy profiles inserted")
-        })
-        .catch(error => {
-            console.log(error);
-        });
+    await db.none(insert).then(() => {
+        console.log("Dummy profiles inserted")
+    }).catch(error => {
+        console.log(error);
+    });
 }
-

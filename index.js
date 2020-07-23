@@ -22,41 +22,37 @@ global.io = io;
 
 const PORT = process.env.PORT || 8080;
 const corsOptions = {
-  origin: `http://localhost:${PORT}`
+    origin: `http://localhost:${PORT}`
 };
 require('./socket').socketConnect();
 
 app.use(cors(corsOptions));
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.urlencoded({extended: true}));
 
 app.use('/api/auth', authRoute);
-app.use('/api/profile' ,authenticateToken, profileRoute);
+app.use('/api/profile', authenticateToken, profileRoute);
 app.use('/api', authenticateToken, notificationRoute);
 // app.use('/api/profile', authenticateToken, profileRoute); route with authentication
 
 
 app.get("/", (req, res) => {
-  res.json({ message: "Welcome to Matcha API" });
+    res.json({message: "Welcome to Matcha API"});
 });
 
 
-mongoose
-.connect(process.env.MONGO_URL, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true
-})
-.then(async () => {
-  await db.any(new QueryFile('matcha.pgsql'));
-  Token.collection.drop();
-  await insertUserProfiles();
+mongoose.connect(process.env.MONGO_URL, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true
+}).then(async () => {
+    await db.any(new QueryFile('matcha.pgsql'));
+    Token.collection.drop();
+    await insertUserProfiles();
 
-  await server.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}.`);
-  });
-})
-.catch(err => {
-  console.log("Cannot connect to the database!", err);
-  process.exit();
+    await server.listen(PORT, () => {
+        console.log(`Server is running on port ${PORT}.`);
+    });
+}).catch(err => {
+    console.log("Cannot connect to the database!", err);
+    process.exit();
 });
-
