@@ -110,7 +110,7 @@ module.exports = filterProfiles = async (req, res) => {
     console.log(req.body);
     const {error} = await schema.validate(req.body);
     if (error) 
-        return res.status(400).send({success: false, Error: error.details});
+        return res.status(400).send({success: false, Error: error.details[0].message});
     
 
 

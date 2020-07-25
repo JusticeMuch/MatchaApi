@@ -49,7 +49,7 @@ const validateToken = (req, res) => {
 
     const {error} = schemaToken.validate(req.params);
     if (error) 
-        return res.status(400).send({success: false, Error: error.details});
+        return res.status(400).send({success: false, Error: error.details[0].message});
     
 
     return Token.findOne({
@@ -72,7 +72,7 @@ const sendTokenPost = async (req, res, next) => {
 
     const {error} = schemaTokenEmail.validate(req.body);
     if (error) 
-        return res.status(400).send({success: false, Error: error.details});
+        return res.status(400).send({success: false, Error: error.details[0].message});
     
 
     const {email} = req.body;
@@ -112,7 +112,7 @@ const sendTokenPost = async (req, res, next) => {
 const register = async (req, res) => {
     const {error} = await schemaRegister.validate(req.body);
     if (error) 
-        return res.status(400).send({success: false, Error: error.details});
+        return res.status(400).send({success: false, Error: error.details[0].message});
     
 
     const {
@@ -138,7 +138,7 @@ const login = async (req, res) => {
 
     const {error} = await schemaLogin.validate(req.body);
     if (error) 
-        return res.status(400).send({success: false, Error: error.details})
+        return res.status(400).send({success: false, Error: error.details[0].message})
 
     
 
@@ -172,7 +172,7 @@ const login = async (req, res) => {
 const resetPassword = async (req, res) => {
     const {error} = schemaTokenEmail.validate(req.body);
     if (error) 
-        return res.status(400).send({success: false, Error: error.details});
+        return res.status(400).send({success: false, Error: error.details[0].message});
     
 
     const {email} = req.body;
@@ -206,7 +206,7 @@ const resetPassword = async (req, res) => {
 const updateUsers = async (req, res) => {
     const {error} = schemaUpdate.validate(req.body);
     if (error) 
-        return res.status(400).send({success: false, Error: error.details});
+        return res.status(400).send({success: false, Error: error.details[0].message});
     
 
     const id = req.user._id;

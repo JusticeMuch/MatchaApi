@@ -34,7 +34,7 @@ const schemaMessage = Joi.object({match_id: Joi.number().required(), date: Joi.s
 const likeCreate = async (req, res) => { // add match creation
     const {error} = await schemaLike.validate(req.body);
     if (error) 
-        return res.status(400).send({success: false, Error: error.details});
+        return res.status(400).send({success: false, Error: error.details[0].message});
     
 
     const {liked_user, date} = req.body;
@@ -53,7 +53,7 @@ const likeCreate = async (req, res) => { // add match creation
 const visitCreate = async (req, res) => {
     const {error} = await schemaVisit.validate(req.body);
     if (error) 
-        return res.status(400).send({success: false, Error: error.details});
+        return res.status(400).send({success: false, Error: error.details[0].message});
     
 
     const {visited, date} = req.body;
@@ -72,7 +72,7 @@ const blockCreate = async (req, res) => {
 
     const {error} = schemaBlock.validate(req.body);
     if (error) 
-        return res.status(400).send({success: false, Error: error.details});
+        return res.status(400).send({success: false, Error: error.details[0].message});
     
 
     const {blocked_user, date} = req.body;
@@ -91,7 +91,7 @@ const blockCreate = async (req, res) => {
 const messageCreate = async (req, res) => {
     const {error} = schemaMessage.validate(req.body);
     if (error) 
-        return res.status(400).send({success: false, Error: error.details});
+        return res.status(400).send({success: false, Error: error.details[0].message});
     
 
     const {match_id, date, content} = req.body;
