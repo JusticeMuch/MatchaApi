@@ -40,12 +40,9 @@ const updateById = async (table, id, values) => {
     try {
         const query = `${
             pgp.helpers.update(values, values, `${table}`,)
-        } WHERE id = $/id/`;
+        } WHERE id = $/id/ returning id`;
         return await db.any(query, {id}).then(async (data) => {
-            return await {
-                success: true,
-                data: data
-            }
+            return data;
         });
     } catch (err) {
         console.log(`Error in updateById on table ${table} + ${err}`);
