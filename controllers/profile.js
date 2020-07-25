@@ -60,7 +60,7 @@ const validateToken = (req, res) => {
             return res.status(400).send({success: false, error: 'We were unable to find a valid token. Your token may have expired.'});
         
         return await updateById("Profile", token._userId, {authenticated: true}).then(data => {
-            if (data.length == 0) 
+            if (data.length == 0 || !data) 
                 return res.status(400).send({success: false, Error: 'We were unable to find a user for this token.'});
             
             return res.status(200).send({success: true, message: "The account has been verified. Please log in."});
@@ -186,7 +186,7 @@ const resetPassword = async (req, res) => {
             const hash = await bcrypt.hash(password, salt);
 
             return await updateById("Profile", data[0].id, {password: hash}).then(async (data) => {
-                if (data.length == 0) 
+                if (data.length == 0 || !data) 
                     return res.status(400).send({success: false, message: 'We were unable to find a user for this email'});
                 
 
@@ -213,8 +213,8 @@ const updateUsers = async (req, res) => {
     const filtered = await checkField(req.body, prof.profileKeys);
 
     return await updateById("Profile", id, filtered).then(async (data) => {
-        if (data.length == 0) 
-            return res.status(400).send({success: false, Error: 'This users values could not be updated'});
+        if (data.length == 0 || !data) 
+            return res.status(400).send({success: false, Error: 'This users values could not be updated as the email or username is already in use'});
          else 
             return res.status(200).send({success: true, message: "Users values have been updated has been changed successfully"});
         
@@ -234,7 +234,7 @@ const changePassword = async (req, res) => {
             const salt = await bcrypt.genSalt(10);
             const hash = await bcrypt.hash(newPassword, salt);
             return await updateById("Profile", id, {password: hash}).then(data => {
-                if (data.length == 0) 
+                if (data.length == 0 || !data) 
                     return res.status(400).send({success: false, Error: 'This password could not be updated'});
                  else 
                     return res.status(200).send({success: true, message: "Password has been changed successfully"})
@@ -278,7 +278,8 @@ const uploadImage = async (req, res) => {
             const url = JSON.parse(body).data.image.url;
             images.push(url);
             return await updateById("Profile", id, {images: images}).then(async (data) => {
-                return res.send({success: true, message: "images uploaded successfully", url: url})
+                if (data)
+                    return res.send({success: true, message: "images uploaded successfully", url: url})
             }).catch(err => res.status(400).send({success: false, Error: err.message}));
         });
 
@@ -312,7 +313,7 @@ const getProfileData = async (req, res, next) => {
         return res.status(400).send({success: false, Error: err.message})
     });
     delete data.password;
-    if (! data || data.length == 0) 
+    if (!data || data.length == 0) 
         return await res.status(400).send({success: false, error: "No results"});
      else 
         return await res.send({success: true, data: data});

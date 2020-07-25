@@ -49,7 +49,7 @@ const updateById = async (table, id, values) => {
         });
     } catch (err) {
         console.log(`Error in updateById on table ${table} + ${err}`);
-        return {success: false, error: err}
+        return null;
     }
 }
 
