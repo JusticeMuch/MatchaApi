@@ -50,7 +50,7 @@ class Like {
                         if (mat) 
                             res.status(200).send({success: true, like_id: data[0].id, match_id: mat.id});
                          else 
-                            res.status(400).send({success: false, Error: "Like created , but error in creating match"});
+                            res.status(400).send({success: false, Error: {message : "Like created , but error in creating match"}});
                         
                     }
                     return await res.status(200).send({success: true, like_id: data[0], match_id: null});
@@ -58,7 +58,7 @@ class Like {
             });
         } catch (err) {
             console.log('Error in model Like.createLike()');
-            return res.status(400).send({success: false, error: err.message});
+            return res.status(400).send({success: false, error: err});
         }
     }
 

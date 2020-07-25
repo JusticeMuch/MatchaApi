@@ -57,12 +57,12 @@ class Profile {
                         return res.send({success: true, id: data[0].id});
                     });
                 } catch (err) {
-                    return res.send({success: false, Error: err.message});
+                    return res.send({success: false, Error: err});
                 }
             });
         } catch (err) {
             console.log('Error in model User.create()');
-            return res.status(400).send({success: false, error: err.message});
+            return res.status(400).send({success: false, error: err});
         }
     }
 

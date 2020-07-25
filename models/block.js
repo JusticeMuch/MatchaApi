@@ -14,7 +14,7 @@ class Block {
                 blocked_user, blocking_user, date
             ],).then(async (data) => {
                 if (data.length == 0) 
-                    return await res.status(400).send({success: false, message: `block not created`});
+                    return await res.status(400).send({success: false, Error :{ message: `block not created`}});
                  else 
                     return await res.status(200).send({
                             success: true, message: `block id : ${
@@ -24,7 +24,7 @@ class Block {
             });
         } catch (err) {
             console.log('Error in model Block.createBlock()');
-            return res.status(400).send({success: false, error: err.message});
+            return res.status(400).send({success: false, error: err});
         }
     }
 

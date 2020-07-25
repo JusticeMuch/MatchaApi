@@ -34,7 +34,7 @@ const schemaMessage = Joi.object({match_id: Joi.number().required(), date: Joi.s
 const likeCreate = async (req, res) => { // add match creation
     const {error} = await schemaLike.validate(req.body);
     if (error) 
-        return res.status(400).send({success: false, Error: error.details[0].message});
+        return res.status(400).send({success: false, Error: error.details});
     
 
     const {liked_user, date} = req.body;
@@ -53,7 +53,7 @@ const likeCreate = async (req, res) => { // add match creation
 const visitCreate = async (req, res) => {
     const {error} = await schemaVisit.validate(req.body);
     if (error) 
-        return res.status(400).send({success: false, Error: error.details[0].message});
+        return res.status(400).send({success: false, Error: error.details});
     
 
     const {visited, date} = req.body;
@@ -72,7 +72,7 @@ const blockCreate = async (req, res) => {
 
     const {error} = schemaBlock.validate(req.body);
     if (error) 
-        return res.status(400).send({success: false, Error: error.details[0].message});
+        return res.status(400).send({success: false, Error: error.details});
     
 
     const {blocked_user, date} = req.body;
@@ -91,7 +91,7 @@ const blockCreate = async (req, res) => {
 const messageCreate = async (req, res) => {
     const {error} = schemaMessage.validate(req.body);
     if (error) 
-        return res.status(400).send({success: false, Error: error.details[0].message});
+        return res.status(400).send({success: false, Error: error.details});
     
 
     const {match_id, date, content} = req.body;
@@ -110,7 +110,7 @@ const messageCreate = async (req, res) => {
 const updateRead = async (req, res) => {
     const {id} = req.body;
     if (!id || id == undefined) 
-        return res.status(400).send({success: false, Error: "ID field is empty or undefined"});
+        return res.status(400).send({success: false, Error:{message : "ID field is empty or undefined"}});
     
 
     try {

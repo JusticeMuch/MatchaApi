@@ -49,7 +49,7 @@ const validateToken = (req, res) => {
 
     const {error} = schemaToken.validate(req.params);
     if (error) 
-        return res.status(400).send({success: false, Error: error.details[0].message});
+        return res.status(400).send({success: false, Error: error.details});
     
 
     return Token.findOne({
@@ -61,10 +61,10 @@ const validateToken = (req, res) => {
         
         return await updateById("Profile", token._userId, {authenticated: true}).then(data => {
             if (data.length == 0 || !data) 
-                return res.status(400).send({success: false, Error: 'We were unable to find a user for this token.'});
+                return res.status(400).send({success: false, Error: {message :'We were unable to find a user for this token.'}});
             
             return res.status(200).send({success: true, message: "The account has been verified. Please log in."});
-        }).catch(err => res.status(400).send({success: false, Error: err.message}));
+        }).catch(err => res.status(400).send({success: false, Error: err}));
     })
 }
 
@@ -72,7 +72,7 @@ const sendTokenPost = async (req, res, next) => {
 
     const {error} = schemaTokenEmail.validate(req.body);
     if (error) 
-        return res.status(400).send({success: false, Error: error.details[0].message});
+        return res.status(400).send({success: false, Error: error.details});
     
 
     const {email} = req.body;
@@ -86,7 +86,7 @@ const sendTokenPost = async (req, res, next) => {
                 token.token = crypto.randomBytes(16).toString('hex');
                 return await token.save(async function (err, token) {
                     if (err) {
-                        return res.status(500).send({message: err.message});
+                        return res.status(500).send({success : false, Error : err});
                     }
                     if (! token) 
                         return res.status(400).send("Token did not save");
@@ -100,19 +100,19 @@ const sendTokenPost = async (req, res, next) => {
                         }`
                     };
                     await sgMail.send(msg);
-                    return await res.send({success: true, id: data[0].id, msg: 'email confirmation sent'});
+                    return await res.send({success: true, id: data[0].id, message: 'email confirmation sent'});
                 });
             } catch (err) {
-                return res.status(400).send({success: false, Error: err.message});
+                return res.status(400).send({success: false, Error: err});
             }
         }
-    }).catch(err => res.status(400).send({success: false, Error: err.message}))
+    }).catch(err => res.status(400).send({success: false, Error: err}))
 };
 
 const register = async (req, res) => {
     const {error} = await schemaRegister.validate(req.body);
     if (error) 
-        return res.status(400).send({success: false, Error: error.details[0].message});
+        return res.status(400).send({success: false, Error: error.details});
     
 
     const {
@@ -138,7 +138,7 @@ const login = async (req, res) => {
 
     const {error} = await schemaLogin.validate(req.body);
     if (error) 
-        return res.status(400).send({success: false, Error: error.details[0].message})
+        return res.status(400).send({success: false, Error: error.details})
 
     
 
@@ -148,13 +148,13 @@ const login = async (req, res) => {
         const valid = await bcrypt.compare(password, data[0].password);
 
         if (data.length == 0) 
-            return res.status(400).send({success: false, Error: "No such user is on system"});
-         else if (!data[0].authenticated) 
-            return res.status(400).send({success: false, Error: "Please validate email"});
-         else if (data[0].suspended) 
-            return res.status(400).send({success: false, Error: "You are suspended , please contact site adminidtrator"});
+            return res.status(400).send({success: false, Error: {message : "No such user is on system"}});
+         else if (!data[0].authenticated)
+            return res.status(400).send({success: false, Error: {message : "Please validate email"}});
+         else if (data[0].suspended)
+            return res.status(400).send({success: false, Error: {message : "You are suspended , please contact site adminidtrator"}});
          else if (! valid) 
-            return res.status(400).send({success: false, Error: "Invalid password"});
+            return res.status(400).send({success: false, Error: {message : "Invalid password"}});
          else {
             const token = jwt.sign({
                 _id: data[0].id
@@ -166,13 +166,13 @@ const login = async (req, res) => {
                 }
             });
         }
-    }).catch(error => res.status(400).send({sucess: false, Error: error.message}));
+    }).catch(error => res.status(400).send({sucess: false, Error: error}));
 }
 
 const resetPassword = async (req, res) => {
     const {error} = schemaTokenEmail.validate(req.body);
     if (error) 
-        return res.status(400).send({success: false, Error: error.details[0].message});
+        return res.status(400).send({success: false, Error: error.details});
     
 
     const {email} = req.body;
@@ -187,7 +187,7 @@ const resetPassword = async (req, res) => {
 
             return await updateById("Profile", data[0].id, {password: hash}).then(async (data) => {
                 if (data.length == 0 || !data) 
-                    return res.status(400).send({success: false, message: 'We were unable to find a user for this email'});
+                    return res.status(400).send({success: false, Error : {message: 'We were unable to find a user for this email'}});
                 
 
                 const msg = {
@@ -200,13 +200,13 @@ const resetPassword = async (req, res) => {
                 return res.status(200).send({success: true, message: "Password has been changed and an email has been sent with the new password."});
             })
         }
-    }).catch(err => res.status(400).send({success: false, Error: err.message}));
+    }).catch(err => res.status(400).send({success: false, Error: err}));
 }
 
 const updateUsers = async (req, res) => {
     const {error} = schemaUpdate.validate(req.body);
     if (error) 
-        return res.status(400).send({success: false, Error: error.details[0].message});
+        return res.status(400).send({success: false, Error: error.details});
     
 
     const id = req.user._id;
@@ -214,11 +214,11 @@ const updateUsers = async (req, res) => {
 
     return await updateById("Profile", id, filtered).then(async (data) => {
         if (data.length == 0 || !data) 
-            return res.status(400).send({success: false, Error: 'This users values could not be updated as the email or username is already in use'});
+            return res.status(400).send({success: false, Error: {message :'This users values could not be updated as the email or username is already in use'}});
          else 
             return res.status(200).send({success: true, message: "Users values have been updated has been changed successfully"});
         
-    }).catch(err => res.status(400).send({success: false, Error: err.message}))
+    }).catch(err => res.status(400).send({success: false, Error: err}))
 }
 
 const changePassword = async (req, res) => {
@@ -227,21 +227,21 @@ const changePassword = async (req, res) => {
 
     return await getFiltered("Profile", "id", id, "password").then(async (data) => {
         if (data.length == 0) 
-            return res.status(400).send({success: false, Error: "No such user is on system"});
+            return res.status(400).send({success: false, Error: {message : "No such user is on system"}});
          else if (! bcrypt.compare(oldPassword, data[0].password)) 
-            return res.status(400).send({success: false, Error: "Wrong old password"});
+            return res.status(400).send({success: false, Error: {message : "Wrong old password"}});
          else {
             const salt = await bcrypt.genSalt(10);
             const hash = await bcrypt.hash(newPassword, salt);
             return await updateById("Profile", id, {password: hash}).then(data => {
                 if (data.length == 0 || !data) 
-                    return res.status(400).send({success: false, Error: 'This password could not be updated'});
+                    return res.status(400).send({success: false, Error: {message : 'This password could not be updated'}});
                  else 
                     return res.status(200).send({success: true, message: "Password has been changed successfully"})
                 
-            }).catch(err => res.status(400).send({success: false, Error: err.message}))
+            }).catch(err => res.status(400).send({success: false, Error: err}))
         }
-    }).catch(err => res.status(400).send({success: false, Error: err.message}))
+    }).catch(err => res.status(400).send({success: false, Error: err}))
 }
 
 const uploadImage = async (req, res) => {
@@ -255,7 +255,7 @@ const uploadImage = async (req, res) => {
         images = [];
     
     if (images.length >= 5) 
-        return res.status(400).send({success: false, Error: "Photo limit of 5 photos is reached"});
+        return res.status(400).send({success: false, Error: {message : "Photo limit of 5 photos is reached"}});
      else {
         const formData = {
             key: process.env.IMGDB_KEY,
@@ -278,9 +278,10 @@ const uploadImage = async (req, res) => {
             const url = JSON.parse(body).data.image.url;
             images.push(url);
             return await updateById("Profile", id, {images: images}).then(async (data) => {
-                if (data)
+                if (data || data.length > 0)
                     return res.send({success: true, message: "images uploaded successfully", url: url})
-            }).catch(err => res.status(400).send({success: false, Error: err.message}));
+                else res.status(500).send({success: false, Error: {message : "Photo not uploaded, server error"}});
+            }).catch(err => res.status(400).send({success: false, Error: err}));
         });
 
     }
@@ -299,9 +300,9 @@ const deleteImage = async (req, res) => {
     const len = (await images).length;
     const imagesFiltered = (await images).filter((value) => value != image);
     if (imagesFiltered.length == len) 
-        return res.status(400).send({success: false, Error: "Photo url sent is not in db as such it cant be deleted"});
+        return res.status(400).send({success: false, Error: {message :"Photo url sent is not in db as such it cant be deleted"}});
      else {
-        updateById("Profile", id, {images: imagesFiltered}).then().catch(err => res.status(400).send({success: false, Error: err.message}));
+        updateById("Profile", id, {images: imagesFiltered}).then().catch(err => res.status(400).send({success: false, Error: err}));
         return res.send({success: true, message: "image has been deleted"});
     } id
 }
@@ -310,11 +311,11 @@ const getProfileData = async (req, res, next) => {
     const data = await getBy("id", req.user._id, "Profile").then(data => {
         return data[0]
     }).catch(err => {
-        return res.status(400).send({success: false, Error: err.message})
+        return res.status(400).send({success: false, Error: err})
     });
     delete data.password;
     if (!data || data.length == 0) 
-        return await res.status(400).send({success: false, error: "No results"});
+        return await res.status(400).send({success: false, Error:{message : "No results"}});
      else 
         return await res.send({success: true, data: data});
     
@@ -348,7 +349,7 @@ const updateLocation = async (req, res) => {
                 location: [parseFloat(lat), parseFloat(long)]
             }).then(async (data) => {
                 res.send({success: true, latitude: lat, longitude: long});
-            }).catch(err => res.status(400).send({success: false, Error: err.message}));
+            }).catch(err => res.status(400).send({success: false, Error: err}));
         }
     });
 }

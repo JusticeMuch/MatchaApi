@@ -14,7 +14,7 @@ class Message {
                 match_id, author, content, date
             ],).then(async (data) => {
                 if (data.length == 0) 
-                    return await res.status(400).send({success: false, message: `message not created`});
+                    return await res.status(400).send({success: false, Error :{message: `message not created`}});
                  else 
                     return await res.status(200).send({success: true, message: `message id : ${
                             data[0].id
@@ -23,7 +23,7 @@ class Message {
             });
         } catch (err) {
             console.log('Error in model Message.createMessage()');
-            return res.status(400).send({success: false, error: err.message});
+            return res.status(400).send({success: false, error: err});
         }
     }
 

@@ -10,7 +10,7 @@ class Report {
 
         const {error} = schema.validate(req.body);
         if (error) 
-            return res.status(400).send({success: false, Error: error.details[0].message});
+            return res.status(400).send({success: false, Error: error.details});
         
 
 
@@ -28,7 +28,7 @@ class Report {
     async suspendUser(req, res) {
         const {username, password, userId} = req.body;
         if (!username || !password || !userId) 
-            return res.status(400).send({success: false, Error: "Fields are blank"});
+            return res.status(400).send({success: false, Error: {message : "Fields are blank"}});
         
 
 
@@ -36,15 +36,15 @@ class Report {
             const valid = await bcrypt.compare(password, data[0].password);
 
             if (data.length == 0) 
-                return res.status(400).send({success: false, Error: "No such admin is on system"});
+                return res.status(400).send({success: false, Error: {message : "No such admin is on system"}});
              else if (! valid) 
-                return res.status(400).send({success: false, Error: "Invalid password"});
+                return res.status(400).send({success: false, Error: {message : "Invalid password"}});
              else {
                 return await updateById("Profile", userId, {suspended: true}).then(data => {
                     res.send({success: true, message: "user has been suspended"});
                 })
             }
-        }).catch(error => res.status(400).send({sucess: false, Error: error.message}));
+        }).catch(error => res.status(400).send({sucess: false, Error: error}));
     }
 }
 

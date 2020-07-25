@@ -110,7 +110,7 @@ module.exports = filterProfiles = async (req, res) => {
     console.log(req.body);
     const {error} = await schema.validate(req.body);
     if (error) 
-        return res.status(400).send({success: false, Error: error.details[0].message});
+        return res.status(400).send({success: false, Error: error.details});
     
 
 
@@ -118,14 +118,14 @@ module.exports = filterProfiles = async (req, res) => {
     const {radius, interests} = req.body;
 
     if (!userData || userData === undefined) 
-        return res.status(400).send({success: false, Error: "Error in getting user data"});
+        return res.status(400).send({success: false, Error: {message :"Error in getting user data"}});
     
 
 
     console.log(await buildFilterStr(req.body, userData));
     profiles = await db.any(await buildFilterStr(req.body, userData)).then((data) => {
         if (!data || data === undefined) 
-            return res.status(400).send({success: false, Error: "Error in getting profiles"});
+            return res.status(400).send({success: false, Error: {message : "Error in getting profiles"}});
         
 
 

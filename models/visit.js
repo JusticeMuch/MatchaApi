@@ -14,7 +14,7 @@ class Visit {
                 visited, visitor, date
             ],).then(async (data) => {
                 if (data.length == 0) 
-                    return await res.status(400).send({success: false, message: `visit not created`});
+                    return await res.status(400).send({success: false, Error : {message: `visit not created`}});
                  else 
                     return await res.status(200).send({
                             success: true, message: `visit id : ${
@@ -24,7 +24,7 @@ class Visit {
             });
         } catch (err) {
             console.log('Error in model Visit.createVisit()');
-            return res.status(400).send({success: false, error: err.message});
+            return res.status(400).send({success: false, error: err});
         }
     }
 
