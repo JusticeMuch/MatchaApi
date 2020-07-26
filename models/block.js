@@ -45,6 +45,25 @@ class Block {
         }
     }
 
+    async getBlocked(req, res) {
+        const {date} = req.query;
+        const blocking_user = req.user._id;
+
+        try {
+            if (!date || date == undefined) {
+                return db.any(`SELECT * FROM public."Block" WHERE blocking_user = $1`, [blocking_user]).then(data => {
+                    return res.status(200).send({success: true, data: data});
+                })
+            } else {
+                return db.any(`SELECT * FROM public."Block" WHERE blocking_user = $1 AND date > $2`, [blocking_user, date]).then(data => {
+                    return res.status(200).send({success: true, data: data});
+                });
+            }
+        } catch (error) {
+            return res.status(400).send({success: false, Error: {message : error.message}});
+        }
+    }
+
     async checkNumberBlocks(req, res) {
         const id = req.user._id;
         try {
