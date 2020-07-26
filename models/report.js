@@ -21,7 +21,7 @@ class Report {
             return res.send({success: true, report_id: data[0].id})
         }).catch(err => {
             console.error(err);
-            return res.status(400).send({success: false, Error: err});
+            return res.status(400).send({success: false, Error: {message : err.message}});
         })
     }
 
@@ -44,7 +44,7 @@ class Report {
                     res.send({success: true, message: "user has been suspended"});
                 })
             }
-        }).catch(error => res.status(400).send({sucess: false, Error: error}));
+        }).catch(error => res.status(400).send({sucess: false, Error: {message : error.message}}));
     }
 }
 

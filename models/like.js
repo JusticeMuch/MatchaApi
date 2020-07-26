@@ -58,7 +58,7 @@ class Like {
             });
         } catch (err) {
             console.log('Error in model Like.createLike()');
-            return res.status(400).send({success: false, error: err});
+            return res.status(400).send({success: false, error: {message : err.message}});
         }
     }
 
@@ -77,7 +77,7 @@ class Like {
                 });
             }
         } catch (error) {
-            return res.status(400).send({success: false, Error: error});
+            return res.status(400).send({success: false, Error: {message : error.message}});
         }
     }
 
@@ -89,7 +89,7 @@ class Like {
             });
         } catch (error) {
             console.log(error);
-            return res.status(400).send({success: false, Error: error});
+            return res.status(400).send({success: false, Error: {message : error.message}});
         }
     }
 }

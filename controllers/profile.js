@@ -64,7 +64,7 @@ const validateToken = (req, res) => {
                 return res.status(400).send({success: false, Error: {message :'We were unable to find a user for this token.'}});
             
             return res.status(200).send({success: true, message: "The account has been verified. Please log in."});
-        }).catch(err => res.status(400).send({success: false, Error: err}));
+        }).catch(err => res.status(400).send({success: false, Error: {message : err.message}}));
     })
 }
 
@@ -86,7 +86,7 @@ const sendTokenPost = async (req, res, next) => {
                 token.token = crypto.randomBytes(16).toString('hex');
                 return await token.save(async function (err, token) {
                     if (err) {
-                        return res.status(500).send({success : false, Error : err});
+                        return res.status(500).send({success : false, Error : {message : err.message}});
                     }
                     if (! token) 
                         return res.status(400).send("Token did not save");
@@ -103,10 +103,10 @@ const sendTokenPost = async (req, res, next) => {
                     return await res.send({success: true, id: data[0].id, message: 'email confirmation sent'});
                 });
             } catch (err) {
-                return res.status(400).send({success: false, Error: err});
+                return res.status(400).send({success: false, Error: {message : err.message}});
             }
         }
-    }).catch(err => res.status(400).send({success: false, Error: err}))
+    }).catch(err => res.status(400).send({success: false, Error: {message : err.message}}))
 };
 
 const register = async (req, res) => {
@@ -166,7 +166,7 @@ const login = async (req, res) => {
                 }
             });
         }
-    }).catch(error => res.status(400).send({sucess: false, Error: error}));
+    }).catch(error => res.status(400).send({sucess: false, Error: {message : "There is no such user on the system"}}));
 }
 
 const resetPassword = async (req, res) => {
@@ -200,7 +200,7 @@ const resetPassword = async (req, res) => {
                 return res.status(200).send({success: true, message: "Password has been changed and an email has been sent with the new password."});
             })
         }
-    }).catch(err => res.status(400).send({success: false, Error: err}));
+    }).catch(err => res.status(400).send({success: false, Error: {message : err.message}}));
 }
 
 const updateUsers = async (req, res) => {
@@ -218,7 +218,7 @@ const updateUsers = async (req, res) => {
          else 
             return res.status(200).send({success: true, message: "Users values have been updated has been changed successfully"});
         
-    }).catch(err => res.status(400).send({success: false, Error: err}))
+    }).catch(err => res.status(400).send({success: false, Error: {message : err.message}}))
 }
 
 const changePassword = async (req, res) => {
@@ -239,9 +239,9 @@ const changePassword = async (req, res) => {
                  else 
                     return res.status(200).send({success: true, message: "Password has been changed successfully"})
                 
-            }).catch(err => res.status(400).send({success: false, Error: err}))
+            }).catch(err => res.status(400).send({success: false, Error: {message : err.message}}))
         }
-    }).catch(err => res.status(400).send({success: false, Error: err}))
+    }).catch(err => res.status(400).send({success: false, Error: {message : err.message}}))
 }
 
 const uploadImage = async (req, res) => {
@@ -281,7 +281,7 @@ const uploadImage = async (req, res) => {
                 if (data || data.length > 0)
                     return res.send({success: true, message: "images uploaded successfully", url: url})
                 else res.status(500).send({success: false, Error: {message : "Photo not uploaded, server error"}});
-            }).catch(err => res.status(400).send({success: false, Error: err}));
+            }).catch(err => res.status(400).send({success: false, Error: {message : err.message}}));
         });
 
     }
@@ -302,7 +302,7 @@ const deleteImage = async (req, res) => {
     if (imagesFiltered.length == len) 
         return res.status(400).send({success: false, Error: {message :"Photo url sent is not in db as such it cant be deleted"}});
      else {
-        updateById("Profile", id, {images: imagesFiltered}).then().catch(err => res.status(400).send({success: false, Error: err}));
+        updateById("Profile", id, {images: imagesFiltered}).then().catch(err => res.status(400).send({success: false, Error: {message : err.message}}));
         return res.send({success: true, message: "image has been deleted"});
     } id
 }
@@ -311,7 +311,7 @@ const getProfileData = async (req, res, next) => {
     const data = await getBy("id", req.user._id, "Profile").then(data => {
         return data[0]
     }).catch(err => {
-        return res.status(400).send({success: false, Error: err})
+        return res.status(400).send({success: false, Error: {message : err.message}})
     });
     delete data.password;
     if (!data || data.length == 0) 
@@ -349,7 +349,7 @@ const updateLocation = async (req, res) => {
                 location: [parseFloat(lat), parseFloat(long)]
             }).then(async (data) => {
                 res.send({success: true, latitude: lat, longitude: long});
-            }).catch(err => res.status(400).send({success: false, Error: err}));
+            }).catch(err => res.status(400).send({success: false, Error: {message : err.message}}));
         }
     });
 }

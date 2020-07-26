@@ -24,7 +24,7 @@ class Visit {
             });
         } catch (err) {
             console.log('Error in model Visit.createVisit()');
-            return res.status(400).send({success: false, error: err});
+            return res.status(400).send({success: false, error: {message : err.message}});
         }
     }
 
@@ -69,7 +69,7 @@ class Visit {
                 });
             }
         } catch (error) {
-            return res.status(400).send({success: false, Error: error});
+            return res.status(400).send({success: false, Error: {message : error.message}});
         }
     }
 

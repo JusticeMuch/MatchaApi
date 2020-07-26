@@ -45,7 +45,7 @@ const likeCreate = async (req, res) => { // add match creation
         await profile.updatePopularity(liked_user, 5);
         return await like.createLike(req, res, {liked_user, liking_user, date});
     } catch (error) {
-        return res.status(400).send({success: false, Error: error});
+        return res.status(400).send({success: false, Error: {message : error.message}});
     }
 
 }
@@ -64,7 +64,7 @@ const visitCreate = async (req, res) => {
         await profile.updatePopularity(visited, 2);
         return await visit.createVisit(req, res, {visitor, visited, date});
     } catch (error) {
-        return res.status(400).send({success: false, Error: error});
+        return res.status(400).send({success: false, Error: {message : error.message}});
     }
 }
 
@@ -84,7 +84,7 @@ const blockCreate = async (req, res) => {
         await profile.updatePopularity(blocked_user, -10);
         return await block.createBlock(req, res, {blocked_user, blocking_user, date});
     } catch (error) {
-        return res.status(400).send({success: false, Error: error});
+        return res.status(400).send({success: false, Error: {message : error.message}});
     }
 }
 
@@ -101,7 +101,7 @@ const messageCreate = async (req, res) => {
         await emitMessage(match_id, createMessage(author, content));
         return await message.createMessage(req, res, {match_id, author, content, date});
     } catch (error) {
-        return res.status(400).send({success: false, Error: error});
+        return res.status(400).send({success: false, Error: {message : error.message}});
     }
 
 
@@ -118,7 +118,7 @@ const updateRead = async (req, res) => {
         return res.status(200).send({success: true, message: "Message updated as read"})
     } catch (error) {
         console.log(error);
-        return res.status(400).send({success: false, Error: error});
+        return res.status(400).send({success: false, Error: {message : error.message}});
     }
 }
 const messageGet = message.getMessages;

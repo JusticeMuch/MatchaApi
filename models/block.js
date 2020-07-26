@@ -24,7 +24,7 @@ class Block {
             });
         } catch (err) {
             console.log('Error in model Block.createBlock()');
-            return res.status(400).send({success: false, error: err});
+            return res.status(400).send({success: false, error: {message : err.message}});
         }
     }
 
@@ -53,7 +53,7 @@ class Block {
             });
         } catch (error) {
             console.log(error);
-            return res.status(400).send({success: false, Error: error});
+            return res.status(400).send({success: false, Error: {message : error.message}});
         }
     }
 }

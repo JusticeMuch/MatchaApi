@@ -28,7 +28,7 @@ const getFiltered = async (table, type, value, inputs) => {
     try {
         return await db.any(`SELECT ${inputs} FROM public."${table}" WHERE $1:name = $2`, [type, value]);
     } catch (err) {
-        console.log(`Error in getFiltered on table ${table} + ${err}`);
+        console.log(`Error in getFiltered on table ${table} + ${{message : err.message}}`);
         return null;
     }
 }
@@ -45,7 +45,7 @@ const updateById = async (table, id, values) => {
             return data;
         });
     } catch (err) {
-        console.log(`Error in updateById on table ${table} + ${err}`);
+        console.log(`Error in updateById on table ${table} + ${{message : err.message}}`);
         return null;
     }
 }

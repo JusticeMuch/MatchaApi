@@ -55,7 +55,7 @@ class Match {
                 });
             }
         } catch (error) {
-            return res.status(400).send({success: false, Error: error});
+            return res.status(400).send({success: false, Error: {message : error.message}});
         }
     }
 
@@ -67,7 +67,7 @@ class Match {
             });
         } catch (error) {
             console.log(error);
-            return res.status(400).send({success: false, Error: error});
+            return res.status(400).send({success: false, Error: {message : error.message}});
         }
     }
 }

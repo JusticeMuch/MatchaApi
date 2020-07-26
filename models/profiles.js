@@ -57,12 +57,12 @@ class Profile {
                         return res.send({success: true, id: data[0].id});
                     });
                 } catch (err) {
-                    return res.send({success: false, Error: err});
+                    return res.send({success: false, Error: {message : err.message}});
                 }
             });
         } catch (err) {
             console.log('Error in model User.create()');
-            return res.status(400).send({success: false, error: err});
+            return res.status(400).send({success: false, error: {message : err.message}});
         }
     }
 
@@ -82,7 +82,7 @@ class Profile {
                 return await res.send({success: true, data: data});
             });
         } catch (error) {
-            return res.status(400).send({success: false, Error: error});
+            return res.status(400).send({success: false, Error: {message : error.message}});
         }
     }
 }
