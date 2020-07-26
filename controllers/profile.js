@@ -147,7 +147,7 @@ const login = async (req, res) => {
     return await getFiltered("Profile", "email", email, "authenticated, password, suspended, id").then(async (data) => {
         const valid = await bcrypt.compare(password, data[0].password);
 
-        if (data.length == 0) 
+        if (data.length == 0 || !data) 
             return res.status(400).send({success: false, Error: {message : "No such user is on system"}});
          else if (!data[0].authenticated)
             return res.status(400).send({success: false, Error: {message : "Please validate email"}});
