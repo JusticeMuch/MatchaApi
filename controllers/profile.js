@@ -162,7 +162,8 @@ const login = async (req, res) => {
             res.header('auth-token', token).send({
                 success: true,
                 data: {
-                    id: data[0].id
+                    id: data[0].id,
+                    token : token
                 }
             });
         }
