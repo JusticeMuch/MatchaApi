@@ -31,7 +31,22 @@ async function authenticateSocketToken(token) {
     }
 }
 
+const validateToken = (req, res) => {
+    const {token} = req.body;
+    if (!token || token === undefined)
+        return res.status(400).send({success : false, Error : {message : "Token is blank or undefined"}});
+    
+    try {
+        valid = jwt.verify(token, process.env.SECRET);
+        if (valid)
+            return res.send({success : true, data : valid});
+    } catch (error) {
+        res.status(400).send({success : false, Error : {message : error.message}});
+    }
+}
+
 module.exports = {
     authenticateToken,
-    authenticateSocketToken
+    authenticateSocketToken,
+    validateToken
 };

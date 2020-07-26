@@ -3,7 +3,7 @@ const bodyParser = require("body-parser");
 const cors = require("cors");
 const mongoose = require("mongoose");
 const Token = require('./models/token');
-const {authenticateToken} = require('./middleware/verifyToken')
+const {authenticateToken, validateToken} = require('./middleware/verifyToken')
 require('dotenv').config()
 const Pool = require('pg').Pool
 const profileRoute = require('./routes/profile');
@@ -16,6 +16,7 @@ const io = socketio(server);
 const authRoute = require('./routes/auth');
 const {db, pgp} = require('./db');
 const insertUserProfiles = require('./init');
+const { ApiGatewayManagementApi } = require("aws-sdk");
 const QueryFile = pgp.QueryFile;
 global.io = io;
 
@@ -33,6 +34,7 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.use('/api/auth', authRoute);
 app.use('/api/profile', authenticateToken, profileRoute);
 app.use('/api', authenticateToken, notificationRoute);
+app.post('/api/token', validateToken);
 // app.use('/api/profile', authenticateToken, profileRoute); route with authentication
 
 
