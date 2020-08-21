@@ -1,7 +1,7 @@
 
 DROP SCHEMA IF EXISTS public CASCADE;
 
-CREATE SCHEMA IF NOT EXISTS public AUTHORIZATION jronald;
+CREATE SCHEMA IF NOT EXISTS public AUTHORIZATION frkkqttefrkerj;
 
 CREATE SEQUENCE IF NOT EXISTS public.block_seq
     START WITH 1
@@ -32,18 +32,18 @@ CREATE SEQUENCE IF NOT EXISTS public.report_seq
     CACHE 1;
 
 
-ALTER TABLE public.report_seq OWNER TO jronald;
+ALTER TABLE public.report_seq OWNER TO frkkqttefrkerj;
 
-ALTER TABLE public.block_seq OWNER TO jronald;
+ALTER TABLE public.block_seq OWNER TO frkkqttefrkerj;
 
-ALTER TABLE public.like_seq OWNER TO jronald;
+ALTER TABLE public.like_seq OWNER TO frkkqttefrkerj;
 
 SET default_tablespace = '';
 
 SET default_with_oids = false;
 
 --
--- Name: Report; Type: TABLE; Schema: public; Owner: jronald
+-- Name: Report; Type: TABLE; Schema: public; Owner: frkkqttefrkerj
 --
 
 CREATE TABLE IF NOT EXISTS public."Report" (
@@ -57,7 +57,7 @@ CREATE TABLE IF NOT EXISTS public."Report" (
 );
 
 
-ALTER TABLE public."Report" OWNER TO jronald;
+ALTER TABLE public."Report" OWNER TO frkkqttefrkerj;
 
 CREATE TABLE IF NOT EXISTS public."Like" (
     id integer DEFAULT nextval('public.like_seq') NOT NULL,
@@ -68,7 +68,7 @@ CREATE TABLE IF NOT EXISTS public."Like" (
 );
 
 
-ALTER TABLE public."Like" OWNER TO jronald;
+ALTER TABLE public."Like" OWNER TO frkkqttefrkerj;
 
 CREATE TABLE IF NOT EXISTS public."Block" (
     id integer DEFAULT nextval('public.block_seq') NOT NULL,
@@ -79,10 +79,10 @@ CREATE TABLE IF NOT EXISTS public."Block" (
 );
 
 
-ALTER TABLE public."Block" OWNER TO jronald;
+ALTER TABLE public."Block" OWNER TO frkkqttefrkerj;
 
 --
--- Name: match_seq; Type: SEQUENCE; Schema: public; Owner: jronald
+-- Name: match_seq; Type: SEQUENCE; Schema: public; Owner: frkkqttefrkerj
 --
 
 CREATE SEQUENCE IF NOT EXISTS public.match_seq
@@ -93,10 +93,10 @@ CREATE SEQUENCE IF NOT EXISTS public.match_seq
     CACHE 1;
 
 
-ALTER TABLE public.match_seq OWNER TO jronald;
+ALTER TABLE public.match_seq OWNER TO frkkqttefrkerj;
 
 --
--- Name: Match; Type: TABLE; Schema: public; Owner: jronald
+-- Name: Match; Type: TABLE; Schema: public; Owner: frkkqttefrkerj
 --
 
 CREATE TABLE IF NOT EXISTS public."Match" (
@@ -108,10 +108,10 @@ CREATE TABLE IF NOT EXISTS public."Match" (
 );
 
 
-ALTER TABLE public."Match" OWNER TO jronald;
+ALTER TABLE public."Match" OWNER TO frkkqttefrkerj;
 
 --
--- Name: message_seq; Type: SEQUENCE; Schema: public; Owner: jronald
+-- Name: message_seq; Type: SEQUENCE; Schema: public; Owner: frkkqttefrkerj
 --
 
 CREATE SEQUENCE IF NOT EXISTS public.message_seq
@@ -122,10 +122,10 @@ CREATE SEQUENCE IF NOT EXISTS public.message_seq
     CACHE 1;
 
 
-ALTER TABLE public.message_seq OWNER TO jronald;
+ALTER TABLE public.message_seq OWNER TO frkkqttefrkerj;
 
 --
--- Name: Message; Type: TABLE; Schema: public; Owner: jronald
+-- Name: Message; Type: TABLE; Schema: public; Owner: frkkqttefrkerj
 --
 
 CREATE TABLE IF NOT EXISTS public."Message" (
@@ -138,11 +138,11 @@ CREATE TABLE IF NOT EXISTS public."Message" (
 );
 
 
-ALTER TABLE public."Message" OWNER TO jronald;
+ALTER TABLE public."Message" OWNER TO frkkqttefrkerj;
 
 
 --
--- Name: profile_seq; Type: SEQUENCE; Schema: public; Owner: jronald
+-- Name: profile_seq; Type: SEQUENCE; Schema: public; Owner: frkkqttefrkerj
 --
 
 CREATE SEQUENCE IF NOT EXISTS public.profile_seq
@@ -153,10 +153,10 @@ CREATE SEQUENCE IF NOT EXISTS public.profile_seq
     CACHE 1;
 
 
-ALTER TABLE public.profile_seq OWNER TO jronald;
+ALTER TABLE public.profile_seq OWNER TO frkkqttefrkerj;
 
 --
--- Name: Profile; Type: TABLE; Schema: public; Owner: jronald
+-- Name: Profile; Type: TABLE; Schema: public; Owner: frkkqttefrkerj
 --
 
 CREATE TABLE IF NOT EXISTS public."Profile" (
@@ -182,10 +182,10 @@ CREATE TABLE IF NOT EXISTS public."Profile" (
 );
 
 
-ALTER TABLE public."Profile" OWNER TO jronald;
+ALTER TABLE public."Profile" OWNER TO frkkqttefrkerj;
 
 
--- Name: visit_seq; Type: SEQUENCE; Schema: public; Owner: jronald
+-- Name: visit_seq; Type: SEQUENCE; Schema: public; Owner: frkkqttefrkerj
 --
 
 CREATE SEQUENCE IF NOT EXISTS public.visit_seq
@@ -196,10 +196,10 @@ CREATE SEQUENCE IF NOT EXISTS public.visit_seq
     CACHE 1;
 
 
-ALTER TABLE public.visit_seq OWNER TO jronald;
+ALTER TABLE public.visit_seq OWNER TO frkkqttefrkerj;
 
 --
--- Name: Visit; Type: TABLE; Schema: public; Owner: jronald
+-- Name: Visit; Type: TABLE; Schema: public; Owner: frkkqttefrkerj
 --
 
 CREATE TABLE IF NOT EXISTS public."Visit" (
@@ -210,14 +210,14 @@ CREATE TABLE IF NOT EXISTS public."Visit" (
 );
 
 
-ALTER TABLE public."Visit" OWNER TO jronald;
+ALTER TABLE public."Visit" OWNER TO frkkqttefrkerj;
 
 
 ALTER TABLE ONLY public."Report"
     ADD CONSTRAINT "pk_Report" PRIMARY KEY (id);
 
 --
--- Name: Like pk_Like; Type: CONSTRAINT; Schema: public; Owner: jronald
+-- Name: Like pk_Like; Type: CONSTRAINT; Schema: public; Owner: frkkqttefrkerj
 --
 
 ALTER TABLE ONLY public."Like"
@@ -227,7 +227,7 @@ ALTER TABLE ONLY public."Block"
     ADD CONSTRAINT "pk_Block" PRIMARY KEY (id);
 
 --
--- Name: Match pk_Match; Type: CONSTRAINT; Schema: public; Owner: jronald
+-- Name: Match pk_Match; Type: CONSTRAINT; Schema: public; Owner: frkkqttefrkerj
 --
 
 ALTER TABLE ONLY public."Match"
@@ -235,14 +235,14 @@ ALTER TABLE ONLY public."Match"
 
 
 --
--- Name: Message pk_Message; Type: CONSTRAINT; Schema: public; Owner: jronald
+-- Name: Message pk_Message; Type: CONSTRAINT; Schema: public; Owner: frkkqttefrkerj
 --
 
 ALTER TABLE ONLY public."Message"
     ADD CONSTRAINT "pk_Message" PRIMARY KEY (id);
 
 --
--- Name: Profile pk_Profile; Type: CONSTRAINT; Schema: public; Owner: jronald
+-- Name: Profile pk_Profile; Type: CONSTRAINT; Schema: public; Owner: frkkqttefrkerj
 --
 
 ALTER TABLE ONLY public."Profile"
@@ -254,7 +254,7 @@ ALTER TABLE ONLY public."Visit"
 
 
 --
--- Name: Report fk_Report_reported_user; Type: FK CONSTRAINT; Schema: public; Owner: jronald
+-- Name: Report fk_Report_reported_user; Type: FK CONSTRAINT; Schema: public; Owner: frkkqttefrkerj
 --
 
 ALTER TABLE ONLY public."Report"
@@ -262,7 +262,7 @@ ALTER TABLE ONLY public."Report"
 
 
 --
--- Name: Report fk_Report_reporting_user; Type: FK CONSTRAINT; Schema: public; Owner: jronald
+-- Name: Report fk_Report_reporting_user; Type: FK CONSTRAINT; Schema: public; Owner: frkkqttefrkerj
 --
 
 ALTER TABLE ONLY public."Report"
@@ -270,7 +270,7 @@ ALTER TABLE ONLY public."Report"
 
 
 --
--- Name: Like fk_Like_liked_user; Type: FK CONSTRAINT; Schema: public; Owner: jronald
+-- Name: Like fk_Like_liked_user; Type: FK CONSTRAINT; Schema: public; Owner: frkkqttefrkerj
 --
 
 ALTER TABLE ONLY public."Like"
@@ -278,7 +278,7 @@ ALTER TABLE ONLY public."Like"
 
 
 --
--- Name: Like fk_Like_liking_user; Type: FK CONSTRAINT; Schema: public; Owner: jronald
+-- Name: Like fk_Like_liking_user; Type: FK CONSTRAINT; Schema: public; Owner: frkkqttefrkerj
 --
 
 ALTER TABLE ONLY public."Like"
@@ -293,7 +293,7 @@ ALTER TABLE ONLY public."Block"
     ADD CONSTRAINT "fk_Block_blocking_user" FOREIGN KEY ("blocking_user") REFERENCES public."Profile"(id);
 
 --
--- Name: Match fk_Match_user1; Type: FK CONSTRAINT; Schema: public; Owner: jronald
+-- Name: Match fk_Match_user1; Type: FK CONSTRAINT; Schema: public; Owner: frkkqttefrkerj
 --
 
 ALTER TABLE ONLY public."Match"
@@ -301,7 +301,7 @@ ALTER TABLE ONLY public."Match"
 
 
 --
--- Name: Match fk_Match_user2; Type: FK CONSTRAINT; Schema: public; Owner: jronald
+-- Name: Match fk_Match_user2; Type: FK CONSTRAINT; Schema: public; Owner: frkkqttefrkerj
 --
 
 ALTER TABLE ONLY public."Match"
@@ -309,7 +309,7 @@ ALTER TABLE ONLY public."Match"
 
 
 --
--- Name: Message fk_Message_author; Type: FK CONSTRAINT; Schema: public; Owner: jronald
+-- Name: Message fk_Message_author; Type: FK CONSTRAINT; Schema: public; Owner: frkkqttefrkerj
 --
 
 ALTER TABLE ONLY public."Message"
@@ -317,7 +317,7 @@ ALTER TABLE ONLY public."Message"
 
 
 --
--- Name: Message fk_Message_match; Type: FK CONSTRAINT; Schema: public; Owner: jronald
+-- Name: Message fk_Message_match; Type: FK CONSTRAINT; Schema: public; Owner: frkkqttefrkerj
 --
 
 ALTER TABLE ONLY public."Message"
