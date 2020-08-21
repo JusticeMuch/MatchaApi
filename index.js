@@ -16,14 +16,15 @@ const io = socketio(server);
 const authRoute = require('./routes/auth');
 const {db, pgp} = require('./db');
 const insertUserProfiles = require('./init');
-const { ApiGatewayManagementApi } = require("aws-sdk");
 const QueryFile = pgp.QueryFile;
 global.io = io;
 
 
 const PORT = process.env.PORT || 8080;
 const corsOptions = {
-    origin: `http://localhost:${PORT}`
+    origin: `http://localhost:5000`,
+
+
 };
 require('./socket').socketConnect();
 
