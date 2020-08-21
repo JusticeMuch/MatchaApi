@@ -32,6 +32,7 @@ app.use(cors(corsOptions));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
 
+app.use('/', (req,res) => res.send('Welcome to Matcha'));
 app.use('/api/auth', authRoute);
 app.use('/api/profile', authenticateToken, profileRoute);
 app.use('/api', authenticateToken, notificationRoute);
