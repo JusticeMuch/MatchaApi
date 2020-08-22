@@ -49,7 +49,7 @@ class Profile {
                             from: 'no-reply@matcha.com',
                             to: email,
                             subject: 'Account Verification Token',
-                            text: `Hello,\n\n Please verify your account by clicking the link: \nhttp://localhost:5000/api/auth/confirmation/${
+                            text: `Hello,\n\n Please verify your account by clicking the link: \n${process.env.API_URL}/api/auth/confirmation/${
                                 token.token
                             }`
                         };

@@ -22,7 +22,7 @@ global.io = io;
 
 const PORT = process.env.PORT || 8080;
 const corsOptions = {
-    origin: `http://localhost:5000`,
+    origin: `${process.env.API_URL}`,
 
 
 };
