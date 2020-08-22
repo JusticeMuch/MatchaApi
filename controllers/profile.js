@@ -168,7 +168,7 @@ const login = async (req, res) => {
                 }
             });
         }
-    }).catch(error => res.status(400).send({sucess: false, Error: {message : "There is no such user on the system"}}));
+    }).catch(error => res.status(400).send({sucess: false, Error: {message : error.message}}));
 }
 
 const resetPassword = async (req, res) => {
