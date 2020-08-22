@@ -155,7 +155,7 @@ const login = async (req, res) => {
          else if (data[0].suspended)
             return res.status(400).send({success: false, Error: {message : "You are suspended , please contact site administrator"}});
          else if (! valid) 
-            return res.status(400).send({success: false, Error: {message : "Invalid password"}});
+            return res.status(400).send({success: false, Error: {message : "No such user is on the system"}});
          else {
             const token = jwt.sign({
                 _id: data[0].id
