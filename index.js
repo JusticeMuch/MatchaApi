@@ -15,11 +15,13 @@ const server = http.createServer(app);
 const io = socketio(server);
 const authRoute = require('./routes/auth');
 const {db, pgp} = require('./db');
+const fs = require('fs');
 const insertUserProfiles = require('./init');
 const QueryFile = pgp.QueryFile;
+
 global.io = io;
 
-
+const interests = JSON.parse(fs.readFileSync('interests.json'));
 const PORT = process.env.PORT || 8080;
 const corsOptions = {
     origin: `${process.env.API_URL}`,
@@ -34,10 +36,15 @@ app.use(bodyParser.urlencoded({extended: true}));
 
 
 app.use('/api/auth', authRoute);
+
+app.get('/api/interests' , (req, res) =>{
+    res.send({data : interests});
+});
+
 app.use('/api/profile', authenticateToken, profileRoute);
 app.use('/api', authenticateToken, notificationRoute);
 app.post('/api/token', validateToken);
-// app.use('/api/profile', authenticateToken, profileRoute); route with authentication
+
 
 
 app.get("/", (req, res) => {

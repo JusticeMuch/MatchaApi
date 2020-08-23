@@ -214,6 +214,16 @@ const updateUsers = async (req, res) => {
     const id = req.user._id;
     const filtered = await checkField(req.body, prof.profileKeys);
 
+    if ('email' in filtered){
+        const msg = {
+            from: 'no-reply@matcha.com',
+            to: filtered['email'],
+            subject: 'Email has been changed',
+            text: `Hello,\n\n Please note that your email has been changed to this email address that you are receiving this on.`
+        };
+        await sgMail.send(msg);
+    }
+
     return await updateById("Profile", id, filtered).then(async (data) => {
         if (data.length == 0 || !data) 
             return res.status(400).send({success: false, Error: {message :'This users values could not be updated as the email or username is already in use'}});
