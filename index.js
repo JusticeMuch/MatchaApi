@@ -22,11 +22,9 @@ const QueryFile = pgp.QueryFile;
 global.io = io;
 
 const interests = JSON.parse(fs.readFileSync('interests.json'));
+
 const PORT = process.env.PORT || 8080;
 const corsOptions = {
-    origin: `${process.env.API_URL}`,
-
-
 };
 require('./socket').socketConnect();
 
