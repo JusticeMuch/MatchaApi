@@ -28,7 +28,7 @@ const corsOptions = {
 };
 require('./socket').socketConnect();
 
-app.use(cors(corsOptions));
+app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
 
