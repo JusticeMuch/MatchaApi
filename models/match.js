@@ -46,11 +46,11 @@ class Match {
 
         try {
             if (!date || date == undefined) {
-                return db.any(`SELECT * FROM public."Match" WHERE user1 = $1 OR user2 = $1`, [user]).then(data => {
+                return db.any(`SELECT * FROM public."Match" WHERE user1 = $1 OR user2 = $1 ORDER BY date DESC;`, [user]).then(data => {
                     return res.status(200).send({success: true, data: data});
                 })
             } else {
-                return db.any(`SELECT * FROM public."Match" WHERE user1 = $1 OR user2 = $1 AND date > $2`, [user, date]).then(data => {
+                return db.any(`SELECT * FROM public."Match" WHERE user1 = $1 OR user2 = $1 AND date > $2 ORDER BY date DESC;`, [user, date]).then(data => {
                     return res.status(200).send({success: true, data: data});
                 });
             }

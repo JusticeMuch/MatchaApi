@@ -72,12 +72,12 @@ class Message {
         try {
             if (!date || date == undefined) {
                 return db.any(`SELECT * FROM public."Message" WHERE match_id = (SELECT match_id FROM public."Match" WHERE user1 
-                    = ${user} OR user2 = ${user});`, [user]).then(data => {
+                    = ${user} OR user2 = ${user}) ORDER BY date DESC;`, [user]).then(data => {
                     return res.status(200).send({success: true, data: data});
                 })
             } else {
                 return db.any(`SELECT * FROM public."Message" WHERE match_id = (SELECT match_id FROM public."Match" WHERE user1 
-                        = ${user} OR user2 = ${user}) AND date > $2;`, [liked_user, date]).then(data => {
+                        = ${user} OR user2 = ${user}) AND date > $2 ORDER BY date DESC;`, [liked_user, date]).then(data => {
                     return res.status(200).send({success: true, data: data});
                 });
             }
