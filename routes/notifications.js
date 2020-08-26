@@ -35,6 +35,6 @@ router.get('/like/count', likesCount);
 router.get('/match/count', matchesCount);
 router.get('/message/count', messageCount);
 router.post('/report', report.createReport);
-router.get('/messages/matchid', getMessageById);
+router.get('/message/matchid', getMessageById);
 
 module.exports = router;
