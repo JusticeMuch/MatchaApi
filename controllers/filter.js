@@ -13,7 +13,8 @@ const schema = Joi.object({
         {min: Joi.number().required(), max: Joi.number().required()}
     ),
     interests: Joi.array(),
-    radius: Joi.number()
+    radius: Joi.number(),
+    id : Joi.number()
 })
 
 // const filter = {
@@ -85,21 +86,22 @@ const addPopularityPreference = (obj) => {
     }`);
 }
 
+const addIdFilter = (id) => {
+    return (` AND ID = ${id}`);
+}
+
 const buildFilterStr = (obj, user) => {
     console.log(obj);
-    const {sexual_preference, age, popularity} = obj;
+    const {sexual_preference, age, popularity, id} = obj;
     let sqlStr = `SELECT * FROM public."Profile" `;
     sqlStr += addSexPref(sexual_preference);
     if (age && age != undefined) 
         sqlStr += addAgePreference(age);
-    
-
 
     if (popularity && popularity != undefined) 
         sqlStr += addPopularityPreference(popularity);
-    
-
-
+    if (id && id != undefined)
+        sqlStr += addIdFilter(id);
     sqlStr += ` AND sexual_preference = '${
         user.gender
     }'`
@@ -119,8 +121,6 @@ module.exports = filterProfiles = async (req, res) => {
 
     if (!userData || userData === undefined) 
         return res.status(400).send({success: false, Error: {message :"Error in getting user data"}});
-    
-
 
     console.log(await buildFilterStr(req.body, userData));
     profiles = await db.any(await buildFilterStr(req.body, userData)).then((data) => {
