@@ -121,6 +121,23 @@ const updateRead = async (req, res) => {
         return res.status(400).send({success: false, Error: {message : error.message}});
     }
 }
+
+const getMessageById = async (req,res) => {
+    const {match_id, date} = req.query;
+
+    if (match_id && match_id != undefined){
+        try{
+            return Message.getMessagesById(match_id, date).then(
+                data => {
+                    return res.send({success : true, data : data});
+                }
+            )
+        }catch(error){
+            return res.status(400).send({success : false, Error : {message : error.message}});
+        }
+    }
+}
+
 const messageGet = message.getMessages;
 const likesGet = like.getLikes;
 const visitsGet = visit.getVisits;
@@ -143,5 +160,6 @@ module.exports = {
     messageCount,
     likesCount,
     matchesCount,
-    blocksGet
+    blocksGet,
+    getMessageById
 }

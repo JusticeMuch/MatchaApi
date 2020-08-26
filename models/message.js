@@ -27,15 +27,23 @@ class Message {
         }
     }
 
-    async getMessagesById(match_id) {
+    async getMessagesById(match_id, date) {
         try {
-            return await db.any(`SELECT author, content, date FROM public."Message" WHERE match_id = $1`, [match_id]).then(async (data) => {
-                if (data.length == 0) 
-                    return null
-                 else 
-                    return data;
-                
-            })
+            if (!date || date == undefined) {
+                return await db.any(`SELECT author, content, date FROM public."Message" WHERE match_id = $1 AND date > $2 ORDER BY date DESC;`, [match_id, date]).then(async (data) => {
+                    if (data.length == 0) 
+                        return null
+                     else 
+                        return data;
+                })
+            }else{
+                return await db.any(`SELECT author, content, date FROM public."Message" WHERE match_id = $1`, [match_id]).then(async (data) => {
+                    if (data.length == 0) 
+                        return null
+                     else 
+                        return data;
+                })
+            }
         } catch (err) {
             console.log('Error in model Message.getMessages()');
             return Error("Something when wrong in Message.getMessages");

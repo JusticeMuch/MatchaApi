@@ -16,7 +16,8 @@ const {
     messageCount,
     likesCount,
     matchesCount,
-    blocksGet
+    blocksGet,
+    getMessageById
 } = require('../controllers/notifications')
 require('dotenv').config();
 
@@ -34,5 +35,6 @@ router.get('/like/count', likesCount);
 router.get('/match/count', matchesCount);
 router.get('/message/count', messageCount);
 router.post('/report', report.createReport);
+router.get('/messages/matchid', getMessageById);
 
 module.exports = router;
