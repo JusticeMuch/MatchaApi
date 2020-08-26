@@ -74,7 +74,7 @@ module.exports.socketConnect = async () => {
             if (result != undefined && result)
                 io.to(socket.id).emit({user : userId , online : true});
             else
-                io.to(socketId).emit({user : userId , online : false})
+                io.to(socketId).emit('userOnline', {user : userId , online : false});
         })
     });
 }
