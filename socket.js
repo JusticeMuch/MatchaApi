@@ -68,5 +68,13 @@ module.exports.socketConnect = async () => {
             socket.removeAllListeners();
             delete connections[await getUser(socket.id)];
         })
+
+        socket.on('checkUserOnline', async (userId) => {
+            let result = getSocket(userId);
+            if (result != undefined && result)
+                io.to(socket.id).emit({user : userId , online : true});
+            else
+                io.to(socketId).emit({user : userId , online : false})
+        })
     });
 }
