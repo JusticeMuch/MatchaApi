@@ -160,7 +160,7 @@ const login = async (req, res) => {
          else {
             const token = jwt.sign({
                 _id: data[0].id
-            }, process.env.SECRET);
+            }, process.env.SECRET, { expiresIn: '12h'});
             res.header('auth-token', token).send({
                 success: true,
                 data: {
