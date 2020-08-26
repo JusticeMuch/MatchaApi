@@ -44,6 +44,7 @@ module.exports.createMessage = (matchId, author, message) => {
 module.exports.checkUserOnline = (user) =>{
     if (user){
         let result = getSocket(user);
+        console.log(result);
 
         if (result && result != undefined)
             return true;
