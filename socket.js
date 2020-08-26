@@ -1,6 +1,7 @@
 // server
 const {authenticateSocketToken} = require('./middleware/verifyToken');
 var invert = require('lodash.invert');
+const { ElasticTranscoder } = require('aws-sdk');
 
 let connections = {}
 
@@ -38,6 +39,18 @@ module.exports.createMessage = (matchId, author, message) => {
         console.log('Error : message contents empty');
         return Error('Message contents empty');
     }
+}
+
+module.exports.checkUserOnline = (user) =>{
+    if (user){
+        let result = getSocket(user);
+
+        if (result && result != undefined)
+            return true;
+        else
+            return false;
+    }else
+        return false;
 }
 
 module.exports.createNotification = (type, sender, receiver, content) => { // like , visit, block

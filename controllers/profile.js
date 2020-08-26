@@ -11,6 +11,7 @@ const prof = new Profile();
 const request = require('request');
 require('dotenv').config();
 const unirest = require("unirest");
+const {checkUserOnline} = require('../socket')
 var FormData = require('form-data');
 
 const {getBy, getFiltered, updateById, checkField} = require('../middleware/generic_methods');
@@ -366,6 +367,16 @@ const updateLocation = async (req, res) => {
     });
 }
 
+const checkOnline = async (req,res) => {
+    const {user} = req.body;
+
+    if (user == undefined || !user)
+        res.statys(400).send({success :false, Error :{message : 'User field is undefined or empty'}});
+    else{
+        return await res.send({success : true, data :{user : user , online : checkUserOnline(user)}})
+    }
+}
+
 const getAllProfiles = prof.getAllProfiles;
 
 module.exports = {
@@ -380,5 +391,6 @@ module.exports = {
     deleteImage,
     getProfileData,
     updateLocation,
-    getAllProfiles
+    getAllProfiles,
+    checkOnline
 }
