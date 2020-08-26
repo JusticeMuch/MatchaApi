@@ -44,13 +44,13 @@ module.exports.createMessage = (matchId, author, message) => {
 module.exports.checkUserOnline = async (user) =>{
     if (user){
         let result = await getSocket(user);
-        console.log(result);
 
         if (result && result != undefined)
             return true;
         else
             return false;
     }else
+    
         return false;
 }
 

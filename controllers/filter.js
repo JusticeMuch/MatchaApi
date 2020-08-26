@@ -87,7 +87,7 @@ const addPopularityPreference = (obj) => {
 }
 
 const addIdFilter = (id) => {
-    return (` AND ID = ${id}`);
+    return (` AND id = ${id}`);
 }
 
 const buildFilterStr = (obj, user) => {
@@ -100,6 +100,7 @@ const buildFilterStr = (obj, user) => {
 
     if (popularity && popularity != undefined) 
         sqlStr += addPopularityPreference(popularity);
+
     if (id && id != undefined)
         sqlStr += addIdFilter(id);
     sqlStr += ` AND sexual_preference = '${
