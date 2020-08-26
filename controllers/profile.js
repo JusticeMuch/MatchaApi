@@ -169,7 +169,12 @@ const login = async (req, res) => {
                 }
             });
         }
-    }).catch(error => res.status(400).send({sucess: false, Error: {message : error.message}}));
+    }).catch(error =>{
+        if (error.message === "Cannot read property 'password' of undefined")
+            return res.status(400).send({sucess: false, Error: {message : "No such user in on the system"}});
+        else
+            return res.status(400).send({sucess: false, Error: {message : error.message}});
+    });
 }
 
 const resetPassword = async (req, res) => {
