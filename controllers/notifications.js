@@ -127,7 +127,7 @@ const getMessageById = async (req,res) => {
 
     if (match_id && match_id != undefined){
         try{
-            return Message.getMessagesById(match_id, date).then(
+            return message.getMessagesById(match_id, date).then(
                 data => {
                     return res.send({success : true, data : data});
                 }
