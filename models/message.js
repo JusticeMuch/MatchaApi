@@ -31,14 +31,14 @@ class Message {
         try {
             if (!date || date == undefined) {
                 return await db.any(`SELECT author, content, date FROM public."Message" WHERE match_id = $1 AND date > $2 ORDER BY date DESC;`, [match_id, date]).then(async (data) => {
-                    if (data.length == 0) 
+                    if (!data || data == undefined) 
                         return null
                      else 
                         return data;
                 })
             }else{
                 return await db.any(`SELECT author, content, date FROM public."Message" WHERE match_id = $1`, [match_id]).then(async (data) => {
-                    if (data.length == 0) 
+                    if (!data || data == undefined) 
                         return null
                      else 
                         return data;
