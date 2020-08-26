@@ -72,7 +72,7 @@ module.exports.socketConnect = async () => {
         socket.on('checkUserOnline', async (userId) => {
             let result = getSocket(userId);
             if (result != undefined && result)
-                io.to(socket.id).emit({user : userId , online : true});
+                io.to(socket.id).emit('userOnline', {user : userId , online : true});
             else
                 io.to(socketId).emit('userOnline', {user : userId , online : false});
         })
