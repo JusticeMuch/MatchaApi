@@ -378,9 +378,9 @@ const checkOnline = async (req,res) => {
     if (user == undefined || !user)
         res.status(400).send({success :false, Error :{message : 'User field is undefined or empty'}});
     else{
-        let res = await checkUserOnline(user);
-        console.log(res);
-        return await res.send({success : true, data :{user : user , online : res }})
+        let result = await checkUserOnline(user);
+        console.log(result);
+        return await res.send({success : true, data :{user : user , online : result }})
     }
 }
 
