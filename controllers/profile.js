@@ -373,7 +373,7 @@ const updateLocation = async (req, res) => {
 }
 
 const checkOnline = async (req,res) => {
-    const {user} = req.body;
+    const {user} = req.query;
 
     if (user == undefined || !user)
         res.status(400).send({success :false, Error :{message : 'User field is undefined or empty'}});
