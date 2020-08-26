@@ -41,9 +41,9 @@ module.exports.createMessage = (matchId, author, message) => {
     }
 }
 
-module.exports.checkUserOnline = (user) =>{
+module.exports.checkUserOnline = async (user) =>{
     if (user){
-        let result = getSocket(user);
+        let result = await getSocket(user);
         console.log(result);
 
         if (result && result != undefined)
