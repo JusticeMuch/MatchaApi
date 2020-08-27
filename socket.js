@@ -7,8 +7,12 @@ let connections = {}
 
 const addConnection = async (socket) => {
     userId = (await authenticateSocketToken(socket.handshake.query.token))._id;
-    connections[userId] = socket.id;
-    console.log('User ' + userId + ' added with socketId :' + connections[userId]);
+    if (userId && userId != undefined){
+        connections[userId] = socket.id;
+        console.log('User ' + userId + ' added with socketId :' + connections[userId]);
+    }else
+        console.log('Error : User Id not in socket');
+    
 }
 
 const getUser = async (socketId) => {
