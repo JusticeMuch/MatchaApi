@@ -98,7 +98,7 @@ const messageCreate = async (req, res) => {
     const author = req.user._id;
 
     try {
-        await emitMessage(match_id, createMessage(author, content));
+        await emitMessage(match_id, createMessage(author, content, date));
         return await message.createMessage(req, res, {match_id, author, content, date});
     } catch (error) {
         return res.status(400).send({success: false, Error: {message : error.message}});

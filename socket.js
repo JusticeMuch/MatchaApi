@@ -32,9 +32,9 @@ module.exports.emitMessage = async (matchId, message) => {
     }
 }
 
-module.exports.createMessage = (matchId, author, message) => {
-    if (author && message) 
-        return {matchId: null, author: author, message: message}
+module.exports.createMessage = (author, message, date) => {
+    if (author && message && date) 
+        return {author: author, content: message, date : date}
      else {
         console.log('Error : message contents empty');
         return Error('Message contents empty');
