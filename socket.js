@@ -21,7 +21,7 @@ const getSocket = async (userId) => {
 
 module.exports.emitNotification = async (userId, notification) => {
     if (userId && notification) {
-        await io.to(await getSocket(userId)).broadcast.emit('notification', notification);
+        await io.to(await getSocket(userId)).emit('notification', notification);
     }
 }
 
