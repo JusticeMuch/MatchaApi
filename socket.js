@@ -21,14 +21,14 @@ const getSocket = async (userId) => {
 
 module.exports.emitNotification = async (userId, notification) => {
     if (userId && notification) {
-        await io.to(await getSocket(userId)).emit('notification', notification);
+        await io.to(await getSocket(userId)).broadcast.emit('notification', notification);
     }
 }
 
 module.exports.emitMessage = async (matchId, message) => {
     if (matchId && message) {
         message.matchId = matchId;
-        await io.to(matchId).emit('message', message);
+        await io.to(matchId).broadcast.emit('message', message);
     }
 }
 
@@ -86,9 +86,9 @@ module.exports.socketConnect = async () => {
         socket.on('checkUserOnline', async (userId) => {
             let result = getSocket(userId);
             if (result != undefined && result)
-                io.to(socket.id).emit('userOnline', {user : userId , online : true});
+                io.to(socket.id).broadcast.emit('userOnline', {user : userId , online : true});
             else
-                io.to(socketId).emit('userOnline', {user : userId , online : false});
+                io.to(socketId).broadcast.emit('userOnline', {user : userId , online : false});
         })
     });
 }
