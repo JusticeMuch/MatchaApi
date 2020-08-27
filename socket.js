@@ -32,7 +32,7 @@ module.exports.emitNotification = async (userId, notification) => {
 module.exports.emitMessage = async (matchId, message) => {
     if (matchId && message) {
         message.matchId = matchId;
-        await io.to(matchId).broadcast.emit('message', message);
+        await io.to(matchId).emit('message', message);
     }
 }
 
