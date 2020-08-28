@@ -67,7 +67,7 @@ const deleteByValue = async(table, field, value) =>{
             return await db.any(`DELETE FROM public."${table}" WHERE $1:name = $2`, [field, value]);
         } catch (err) {
             console.log(`Error in deleteByValue on table ${table} + ${{message : err.message}}`);
-            return Error(err.message)
+            return null;
         } 
     }else{
         return null;

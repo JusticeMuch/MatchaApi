@@ -89,7 +89,7 @@ class Block {
                 res.status(400).send({success : false, Error : {message : error.message}});
             }
         }else{
-            res.status(400).send({success: false, Error : {message : "Id field is empty" }})
+            res.status(400).send({success: false, Error : {message : "Id field is empty" }});
         }
     }
 }
