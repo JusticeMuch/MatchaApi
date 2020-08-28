@@ -64,7 +64,9 @@ const checkField = async (obj, Fields) => { // returns keys and objects of Profi
 const deleteByValue = async(table, field, value) =>{
     if (table && field && value){
         try {
-            return await db.any(`DELETE FROM public."${table}" WHERE $1:name = $2`, [field, value]);
+            return await db.any(`DELETE FROM public."${table}" WHERE $1:name = $2`, [field, value]).then(data => {
+                return data;
+            });
         } catch (err) {
             console.log(`Error in deleteByValue on table ${table} + ${{message : err.message}}`);
             return null;
