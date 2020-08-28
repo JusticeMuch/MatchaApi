@@ -87,7 +87,7 @@ class Profile {
     }
 
     async deleteById(req, res){
-        const {id} = req.query;
+        const {id} = req.user._id
 
         if (id && id != undefined){
             try {
