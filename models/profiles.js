@@ -87,11 +87,11 @@ class Profile {
     }
 
     async deleteById(req, res){
-        const {id} = req.user._id
+        const id = req.user._id
 
         if (id && id != undefined){
             try {
-                return deleteByValue("Profile", "id", id).then(data => {
+                return deleteByValzue("Profile", "id", id).then(data => {
                     res.send({success :true, message : `Profile id : ${id} deleted`});
                 });
             } catch (error) {
