@@ -5,7 +5,7 @@ const Token = require('../models/token');
 const sgMail = require('@sendgrid/mail');
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 const jwt = require('jsonwebtoken');
-const {updateById} = require('../middleware/generic_methods');
+const {updateById, deleteByValue} = require('../middleware/generic_methods');
 
 class Profile {
     profileKeys = [
