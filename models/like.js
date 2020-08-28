@@ -94,7 +94,7 @@ class Like {
     }
 
     async deleteById(req, res){
-        const {id} = req.params;
+        const {id} = req.query;
 
         if (id && id != undefined){
             try {
@@ -104,6 +104,8 @@ class Like {
             } catch (error) {
                 res.status(400).send({success : false, Error : {message : error.message}});
             }
+        }else{
+            res.status(400).send({success: false, Error : {message : "Id field is empty" }})
         }
     }
 }

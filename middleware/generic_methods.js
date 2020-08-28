@@ -69,6 +69,8 @@ const deleteByValue = async(table, field, value) =>{
             console.log(`Error in deleteByValue on table ${table} + ${{message : err.message}}`);
             return Error(err.message)
         } 
+    }else{
+        return Error("Fields are blank in function deleteByValue");
     }
 }
 
