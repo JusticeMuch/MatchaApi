@@ -61,10 +61,22 @@ const checkField = async (obj, Fields) => { // returns keys and objects of Profi
     return result;
 }
 
+const deleteByValue = async(table, field, value) =>{
+    if (table && id){
+        try {
+            return await db.any(`DELETE FROM public."${table}" WHERE $1:name = $2`, [field, value]);
+        } catch (err) {
+            console.log(`Error in deleteByValue on table ${table} + ${{message : err.message}}`);
+            return Error(err.message)
+        } 
+    }
+}
+
 module.exports = {
     EndpointResponse,
     getBy,
     getFiltered,
     updateById,
-    checkField
+    checkField,
+    deleteByValue
 }

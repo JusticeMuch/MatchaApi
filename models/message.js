@@ -93,6 +93,20 @@ class Message {
             return res.status(400).send({success: false, Error: {message : error.message}});
         }
     }
+
+    async deleteById(req, res){
+        const {id} = req.params;
+
+        if (id && id != undefined){
+            try {
+                return deleteByValue("Message", "id", id).then(data => {
+                    res.send({success :true, message : `Message id : ${id} deleted`});
+                });
+            } catch (error) {
+                res.status(400).send({success : false, Error : {message : error.message}});
+            }
+        }
+    }
 }
 
 module.exports = {

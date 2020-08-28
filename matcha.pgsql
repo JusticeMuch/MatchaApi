@@ -258,7 +258,7 @@ ALTER TABLE ONLY public."Visit"
 --
 
 ALTER TABLE ONLY public."Report"
-    ADD CONSTRAINT "fk_Report_reported_user" FOREIGN KEY ("reported_user") REFERENCES public."Profile"(id);
+    ADD CONSTRAINT "fk_Report_reported_user" FOREIGN KEY ("reported_user") REFERENCES public."Profile"(id) ON DELETE CASCADE;
 
 
 --
@@ -266,7 +266,7 @@ ALTER TABLE ONLY public."Report"
 --
 
 ALTER TABLE ONLY public."Report"
-    ADD CONSTRAINT "fk_Report_reporting_user" FOREIGN KEY ("reporting_user") REFERENCES public."Profile"(id);
+    ADD CONSTRAINT "fk_Report_reporting_user" FOREIGN KEY ("reporting_user") REFERENCES public."Profile"(id) ON DELETE CASCADE;
 
 
 --
@@ -274,7 +274,7 @@ ALTER TABLE ONLY public."Report"
 --
 
 ALTER TABLE ONLY public."Like"
-    ADD CONSTRAINT "fk_Like_liked_user" FOREIGN KEY ("liked_user") REFERENCES public."Profile"(id);
+    ADD CONSTRAINT "fk_Like_liked_user" FOREIGN KEY ("liked_user") REFERENCES public."Profile"(id) ON DELETE CASCADE;
 
 
 --
@@ -282,22 +282,22 @@ ALTER TABLE ONLY public."Like"
 --
 
 ALTER TABLE ONLY public."Like"
-    ADD CONSTRAINT "fk_Like_liking_user" FOREIGN KEY ("liking_user") REFERENCES public."Profile"(id);
+    ADD CONSTRAINT "fk_Like_liking_user" FOREIGN KEY ("liking_user") REFERENCES public."Profile"(id) ON DELETE CASCADE;
 
 
 ALTER TABLE ONLY public."Block"
-    ADD CONSTRAINT "fk_Block_blocked_user" FOREIGN KEY ("blocked_user") REFERENCES public."Profile"(id);
+    ADD CONSTRAINT "fk_Block_blocked_user" FOREIGN KEY ("blocked_user") REFERENCES public."Profile"(id) ON DELETE CASCADE;
 
 
 ALTER TABLE ONLY public."Block"
-    ADD CONSTRAINT "fk_Block_blocking_user" FOREIGN KEY ("blocking_user") REFERENCES public."Profile"(id);
+    ADD CONSTRAINT "fk_Block_blocking_user" FOREIGN KEY ("blocking_user") REFERENCES public."Profile"(id) ON DELETE CASCADE;
 
 --
 -- Name: Match fk_Match_user1; Type: FK CONSTRAINT; Schema: public; Owner: frkkqttefrkerj
 --
 
 ALTER TABLE ONLY public."Match"
-    ADD CONSTRAINT "fk_Match_user1" FOREIGN KEY (user1) REFERENCES public."Profile"(id);
+    ADD CONSTRAINT "fk_Match_user1" FOREIGN KEY (user1) REFERENCES public."Profile"(id) ON DELETE CASCADE;
 
 
 --
@@ -305,7 +305,7 @@ ALTER TABLE ONLY public."Match"
 --
 
 ALTER TABLE ONLY public."Match"
-    ADD CONSTRAINT "fk_Match_user2" FOREIGN KEY (user2) REFERENCES public."Profile"(id);
+    ADD CONSTRAINT "fk_Match_user2" FOREIGN KEY (user2) REFERENCES public."Profile"(id) ON DELETE CASCADE;
 
 
 --
@@ -313,7 +313,7 @@ ALTER TABLE ONLY public."Match"
 --
 
 ALTER TABLE ONLY public."Message"
-    ADD CONSTRAINT "fk_Message_author" FOREIGN KEY (author) REFERENCES public."Profile"(id);
+    ADD CONSTRAINT "fk_Message_author" FOREIGN KEY (author) REFERENCES public."Profile"(id) ON DELETE CASCADE;
 
 
 --
@@ -321,16 +321,16 @@ ALTER TABLE ONLY public."Message"
 --
 
 ALTER TABLE ONLY public."Message"
-    ADD CONSTRAINT "fk_Message_match_id" FOREIGN KEY (match_id) REFERENCES public."Match"(id);
+    ADD CONSTRAINT "fk_Message_match_id" FOREIGN KEY (match_id) REFERENCES public."Match"(id) ON DELETE CASCADE;
 
 
 
 ALTER TABLE ONLY public."Visit"
-    ADD CONSTRAINT "fk_Visit_visited" FOREIGN KEY (visited) REFERENCES public."Profile"(id);
+    ADD CONSTRAINT "fk_Visit_visited" FOREIGN KEY (visited) REFERENCES public."Profile"(id) ON DELETE CASCADE;
 
 
 ALTER TABLE ONLY public."Visit"
-    ADD CONSTRAINT "fk_Visit_visitor" FOREIGN KEY (visitor) REFERENCES public."Profile"(id);
+    ADD CONSTRAINT "fk_Visit_visitor" FOREIGN KEY (visitor) REFERENCES public."Profile"(id) ON DELETE CASCADE;
 
 CREATE TABLE IF NOT EXISTS public."Admin" (
     id integer PRIMARY KEY NOT NULL,

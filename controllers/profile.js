@@ -384,6 +384,9 @@ const checkOnline = async (req,res) => {
     }
 }
 
+const deleteProfile = prof.deleteById;
+
+
 const getAllProfiles = prof.getAllProfiles;
 
 module.exports = {
@@ -399,5 +402,6 @@ module.exports = {
     getProfileData,
     updateLocation,
     getAllProfiles,
-    checkOnline
+    checkOnline,
+    deleteProfile
 }

@@ -9,7 +9,8 @@ const {
     updateLocation,
     changePassword,
     getAllProfiles,
-    checkOnline
+    checkOnline,
+    deleteProfile
 } = require('../controllers/profile');
 const filterProfiles = require('../controllers/filter');
 require('dotenv').config();
@@ -24,5 +25,6 @@ router.put('/location', updateLocation)
 router.post('/changePassword', changePassword);
 router.post('/filter', filterProfiles);
 router.get('/online', checkOnline);
+router.delete('/', deleteProfile);
 
 module.exports = router;

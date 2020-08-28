@@ -5,6 +5,7 @@ const Token = require('../models/token');
 const sgMail = require('@sendgrid/mail');
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 const jwt = require('jsonwebtoken');
+const {deleteByValue} = require('../middleware/generic_methods');
 
 class Block {
     async createBlock(req, res, object) {
@@ -73,6 +74,20 @@ class Block {
         } catch (error) {
             console.log(error);
             return res.status(400).send({success: false, Error: {message : error.message}});
+        }
+    }
+
+    async deleteById(req, res){
+        const {id} = req.params;
+
+        if (id && id != undefined){
+            try {
+                return deleteByValue("Block", "id", id).then(data => {
+                    res.send({success :true, message : `Block id : ${id} deleted`});
+                });
+            } catch (error) {
+                res.status(400).send({success : false, Error : {message : error.message}});
+            }
         }
     }
 }

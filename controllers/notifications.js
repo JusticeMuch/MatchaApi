@@ -148,6 +148,10 @@ const messageCount = message.checkNumberMessagesRead;
 const likesCount = like.checkNumberLikes;
 const matchesCount = match.checkNumberMatches;
 const blocksGet = block.getBlocked;
+const deleteBlock = block.deleteById;
+const likeDelete = like.deleteById;
+const matchDelete = match.deleteById;
+const messageDelete = message.deleteById;
 
 module.exports = {
     likeCreate,
@@ -163,5 +167,9 @@ module.exports = {
     likesCount,
     matchesCount,
     blocksGet,
-    getMessageById
+    getMessageById,
+    deleteBlock,
+    likeDelete,
+    matchDelete,
+    messageDelete
 }

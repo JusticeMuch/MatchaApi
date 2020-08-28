@@ -17,7 +17,11 @@ const {
     likesCount,
     matchesCount,
     blocksGet,
-    getMessageById
+    getMessageById,
+    deleteBlock,
+    likeDelete,
+    matchDelete,  
+    messageDelete
 } = require('../controllers/notifications')
 require('dotenv').config();
 
@@ -36,5 +40,9 @@ router.get('/match/count', matchesCount);
 router.get('/message/count', messageCount);
 router.post('/report', report.createReport);
 router.get('/message/matchid', getMessageById);
+router.delete('/block', deleteBlock);
+router.delete('/like', likeDelete);
+router.delete('/match', matchDelete);
+router.delete('/message', messageDelete);
 
 module.exports = router;
