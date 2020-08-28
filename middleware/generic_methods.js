@@ -70,7 +70,7 @@ const deleteByValue = async(table, field, value) =>{
             return Error(err.message)
         } 
     }else{
-        return Error("Fields are blank in function deleteByValue");
+        return null;
     }
 }
 
