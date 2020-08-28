@@ -91,7 +91,7 @@ class Profile {
 
         if (id && id != undefined){
             try {
-                return deleteByValzue("Profile", "id", id).then(data => {
+                return deleteByValue("Profile", "id", id).then(data => {
                     res.send({success :true, message : `Profile id : ${id} deleted`});
                 });
             } catch (error) {
