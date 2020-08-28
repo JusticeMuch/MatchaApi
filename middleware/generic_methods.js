@@ -62,7 +62,7 @@ const checkField = async (obj, Fields) => { // returns keys and objects of Profi
 }
 
 const deleteByValue = async(table, field, value) =>{
-    if (table && id){
+    if (table && field && value){
         try {
             return await db.any(`DELETE FROM public."${table}" WHERE $1:name = $2`, [field, value]);
         } catch (err) {
