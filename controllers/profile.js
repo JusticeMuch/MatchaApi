@@ -306,7 +306,7 @@ const uploadImage = async (req, res) => {
 }
 
 const deleteImage = async (req, res) => {
-    const {image} = req.body;
+    const {image} = req.query;
     const id = req.user._id
 
     if (!image || image == undefined) 

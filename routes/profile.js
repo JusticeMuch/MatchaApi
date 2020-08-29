@@ -25,6 +25,6 @@ router.put('/location', updateLocation)
 router.post('/changePassword', changePassword);
 router.post('/filter', filterProfiles);
 router.get('/online', checkOnline);
-router.post('/', deleteProfile);
+router.delete('/', deleteProfile);
 
 module.exports = router;
