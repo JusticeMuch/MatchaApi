@@ -49,12 +49,12 @@ class Like {
 
                         await profile.updatePopularity(liked_user, 5);
                         if (mat) 
-                            res.status(200).send({success: true, like_id: data[0].id, match_id: mat.id});
+                            res.status(200).send({success: true, data :{like_id: data[0].id, match_id: mat.id}});
                          else 
                             res.status(400).send({success: false, Error: {message : "Like created , but error in creating match"}});
                         
                     }
-                    return await res.status(200).send({success: true, like_id: data[0].id, match_id: null});
+                    return await res.status(200).send({success: true, data :{like_id: data[0].id, match_id: null}});
                 }
             });
         } catch (err) {
