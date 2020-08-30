@@ -11,6 +11,7 @@ const jwt = require('jsonwebtoken');
 const match = new Match();
 const profile = new Profile();
 const {deleteByValue} = require('../middleware/generic_methods');
+const {getBy} = require('../middleware/generic_methods');
 
 class Like {
 
@@ -100,7 +101,11 @@ class Like {
         if (id && id != undefined){
             try {
                 return deleteByValue("Like", "id", id).then(data => {
-                    res.send({success :true, message : `Like id : ${id} deleted`});
+                    getBy("id", id, "Like").then(data => {
+                        emitNotification(data[0]['liked_user'] , createNotification(
+                            'unlike', data[0]['liking_user'], data[0]['liked_user'], null));
+                    });
+                    return res.send({success :true, message : `Like id : ${id} deleted`});
                 });
             } catch (error) {
                 res.status(400).send({success : false, Error : {message : error.message}});
