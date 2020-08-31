@@ -391,6 +391,7 @@ const getProfilesFromLikes = async (req, res) => {
         return db.any(`SELECT * FROM public."Profile" WHERE id =(SELECT liking_user FROM public."Like" WHERE liked_user = ${user})` ).then(
             async (data) => {
                 data = await data.forEach(element => delete element.password);
+                console.log(data);
                 return await res.send({success : true, data : data});
             }
         )
@@ -405,7 +406,8 @@ const getProfilesFromLiked = async (req, res) => {
     try {
         return db.any(`SELECT * FROM public."Profile" WHERE id =(SELECT liking_user FROM public."Like" WHERE liking_user = ${user})` ).then(
             async (data) => {
-
+                data = await data.forEach(element => delete element.password);
+                console.log(data);
                 return await res.send({success : true, data : data});
             }
         )
@@ -421,6 +423,7 @@ const getProfileFromMatches = async (req, res) => {
         return db.any(`SELECT * FROM public."Profile" WHERE id = ((SELECT user1 FROM public."Match" WHERE user2 = ${user}) OR (SELECT user2 FROM public."Match" WHERE user1 = ${user}))` ).then(
             async (data) => {
                 data = await data.forEach(element => delete element.password);
+                console.log(data);
                 return await res.send({success : true, data : data});
             }
         )
