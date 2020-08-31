@@ -31,6 +31,6 @@ router.get('/online', checkOnline);
 router.delete('/', deleteProfile);
 router.get('/match', getProfileFromMatches);
 router.get('/liked', getProfilesFromLiked);
-router.get('/liked', getProfilesFromLikes);
+router.get('/likes', getProfilesFromLikes);
 
 module.exports = router;

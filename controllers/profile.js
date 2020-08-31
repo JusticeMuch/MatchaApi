@@ -405,7 +405,7 @@ const getProfilesFromLiked = async (req, res) => {
     try {
         return db.any(`SELECT * FROM public."Profile" WHERE id =(SELECT liking_user FROM public."Like" WHERE liking_user = ${user})` ).then(
             async (data) => {
-                data = await data.forEach(element => delete element.password);
+
                 return await res.send({success : true, data : data});
             }
         )
