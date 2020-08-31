@@ -384,6 +384,51 @@ const checkOnline = async (req,res) => {
     }
 }
 
+const getProfilesFromLikes = async (req, res) => {
+    const user = req.user._id;
+
+    try {
+        return db.any(`SELECT * FROM public."Profile" WHERE id =(SELECT liking_user FROM public."Like" WHERE liked_user = ${user})` ).then(
+            async (data) => {
+                data = await data.forEach(element => delete element.password);
+                return await res.send({success : true, data : data});
+            }
+        )
+    } catch (error) {
+        return res.status(400).send({success : false, Error : {message : error.message}});
+    }
+}
+
+const getProfilesFromLiked = async (req, res) => {
+    const user = req.user._id;
+
+    try {
+        return db.any(`SELECT * FROM public."Profile" WHERE id =(SELECT liking_user FROM public."Like" WHERE liking_user = ${user})` ).then(
+            async (data) => {
+                data = await data.forEach(element => delete element.password);
+                return await res.send({success : true, data : data});
+            }
+        )
+    } catch (error) {
+        return res.status(400).send({success : false, Error : {message : error.message}});
+    }
+}
+
+const getProfileFromMatches = async (req, res) => {
+    const user = req.user._id;
+
+    try {
+        return db.any(`SELECT * FROM public."Profile" WHERE id = ((SELECT user1 FROM public."Match" WHERE user2 = ${user}) OR (SELECT user2 FROM public."Match" WHERE user1 = ${user}))` ).then(
+            async (data) => {
+                data = await data.forEach(element => delete element.password);
+                return await res.send({success : true, data : data});
+            }
+        )
+    } catch (error) {
+        return res.status(400).send({success : false, Error : {message : error.message}});
+    }
+}
+
 const deleteProfile = prof.deleteById;
 
 
@@ -403,5 +448,8 @@ module.exports = {
     updateLocation,
     getAllProfiles,
     checkOnline,
-    deleteProfile
+    deleteProfile,
+    getProfilesFromLikes,
+    getProfilesFromLiked,
+    getProfileFromMatches
 }

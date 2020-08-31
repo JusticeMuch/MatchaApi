@@ -10,7 +10,10 @@ const {
     changePassword,
     getAllProfiles,
     checkOnline,
-    deleteProfile
+    deleteProfile,
+    getProfileFromMatches,
+    getProfilesFromLiked,
+    getProfilesFromLikes
 } = require('../controllers/profile');
 const filterProfiles = require('../controllers/filter');
 require('dotenv').config();
@@ -26,5 +29,8 @@ router.post('/changePassword', changePassword);
 router.post('/filter', filterProfiles);
 router.get('/online', checkOnline);
 router.delete('/', deleteProfile);
+router.get('/match', getProfileFromMatches);
+router.get('/liked', getProfilesFromLiked);
+router.get('/liked', getProfilesFromLikes);
 
 module.exports = router;
