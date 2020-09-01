@@ -388,10 +388,12 @@ const getProfilesFromLikes = async (req, res) => {
     const user = req.user._id;
 
     try {
-        return db.any(`SELECT * FROM public."Profile" WHERE id =(SELECT liking_user FROM public."Like" WHERE liked_user = ${user})` ).then(
+        return db.any(`SELECT * FROM public."Profile" WHERE id =(SELECT liking_user FROM public."Like" WHERE liked_user = ${user});` ).then(
             async (data) => {
-                data = await data.forEach(element => delete element.password);
+                console.log(user);
                 console.log(data);
+                if (data && data.length > 0)
+                    await data.forEach(element => delete element.password);
                 return await res.send({success : true, data : data});
             }
         )
@@ -406,8 +408,10 @@ const getProfilesFromLiked = async (req, res) => {
     try {
         return db.any(`SELECT * FROM public."Profile" WHERE id =(SELECT liking_user FROM public."Like" WHERE liking_user = ${user})` ).then(
             async (data) => {
-                data = await data.forEach(element => delete element.password);
+                console.log(user);
                 console.log(data);
+                if (data && data.length > 0)
+                    await data.forEach(element => delete element.password);
                 return await res.send({success : true, data : data});
             }
         )
@@ -422,8 +426,8 @@ const getProfileFromMatches = async (req, res) => {
     try {
         return db.any(`SELECT * FROM public."Profile" WHERE id = ((SELECT user1 FROM public."Match" WHERE user2 = ${user}) OR (SELECT user2 FROM public."Match" WHERE user1 = ${user}))` ).then(
             async (data) => {
-                data = await data.forEach(element => delete element.password);
-                console.log(data);
+                if (data && data.length > 0)
+                    await data.forEach(element => delete element.password);
                 return await res.send({success : true, data : data});
             }
         )
