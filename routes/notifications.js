@@ -21,7 +21,8 @@ const {
     deleteBlock,
     likeDelete,
     matchDelete,  
-    messageDelete
+    messageDelete,
+    getLiked
 } = require('../controllers/notifications')
 require('dotenv').config();
 
@@ -44,5 +45,6 @@ router.delete('/block', deleteBlock);
 router.delete('/like', likeDelete);
 router.delete('/match', matchDelete);
 router.delete('/message', messageDelete);
+router.get('/liked', getLiked);
 
 module.exports = router;

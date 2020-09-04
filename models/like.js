@@ -83,6 +83,17 @@ class Like {
         }
     }
 
+    async getLiked(req, res){
+        const user = req.user._id;
+        try {
+            return db.any(`SELECT * FROM public."Like" WHERE liking_user = $1 ORDER BY date DESC;`, [user]).then(data => {
+                return res.status(200).send({success: true, data: data});
+            });
+        } catch (error) {
+            return res.status(400).send({success: false, Error: {message : error.message}});
+        }
+    }
+
     async checkNumberLikes(req, res) {
         const id = req.user._id;
         try {
