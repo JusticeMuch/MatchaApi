@@ -34,14 +34,14 @@ let data = JSON.parse(fs.readFileSync('users.json'));
 
 // fs.writeFileSync('users.json', JSON.stringify(data));
 module.exports = async function insertDummyProfiles() {
-    // const salt = await bcrypt.genSalt(10);
-    // const hash = await bcrypt.hash(process.env.PG_PASSWORD, salt);
+    const salt = await bcrypt.genSalt(10);
+    const hash = await bcrypt.hash(process.env.PG_PASSWORD, salt);
 
-    await db.any('DELETE FROM public."Profile" WHERE id >= 1009');
+    // await db.any('DELETE FROM public."Profile" WHERE id >= 1009');
 
-    // await db.any('INSERT INTO public."Admin" (id, username, password) VALUES ($1, $2, $3) RETURNING id', [
-    //     process.env.ADMIN_ID, process.env.PG_USERNAME, hash
-    // ],).then().catch(err => console.log(err));
+    await db.any('INSERT INTO public."Admin" (id, username, password) VALUES ($1, $2, $3) RETURNING id', [
+        process.env.ADMIN_ID, process.env.PG_USERNAME, hash
+    ],).then().catch(err => console.log(err));
 
     cs = new pgp.helpers.ColumnSet([
         'profile_picture',
