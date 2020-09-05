@@ -21,8 +21,9 @@ let data = JSON.parse(fs.readFileSync('users.json'));
 
 
 //     data.forEach(async (element) => {
-//         element.profile_picture = "https://picsum.photos/320/480";
-//         element.images = ["https://picsum.photos/320/480", "https://picsum.photos/320/480", "https://picsum.photos/320/480","https://picsum.photos/320/480","https://picsum.photos/320/480"]
+//         let size = Math.floor(Math.random() * 150) + 480
+//         element.profile_picture = `https://picsum.photos/${size}/${size}`;
+//         element.images = [`https://picsum.photos/481/${size}`, `https://picsum.photos/482/${size}`,`https://picsum.photos/483/${size}`]
 //         element.interests = generateInterests();
 //         element.authenticated = true;
 //         element.suspended = false;
@@ -33,10 +34,10 @@ let data = JSON.parse(fs.readFileSync('users.json'));
 
 // fs.writeFileSync('users.json', JSON.stringify(data));
 module.exports = async function insertDummyProfiles() {
-//     const salt = await bcrypt.genSalt(10);
-//     const hash = await bcrypt.hash(process.env.PG_PASSWORD, salt);
+    // const salt = await bcrypt.genSalt(10);
+    // const hash = await bcrypt.hash(process.env.PG_PASSWORD, salt);
 
-    await db.any('DELETE FROM public."Profile" WHERE id <= 1000');
+    await db.any('DELETE FROM public."Profile" WHERE id >= 1009');
 
     // await db.any('INSERT INTO public."Admin" (id, username, password) VALUES ($1, $2, $3) RETURNING id', [
     //     process.env.ADMIN_ID, process.env.PG_USERNAME, hash
