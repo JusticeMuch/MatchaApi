@@ -105,7 +105,7 @@ const buildFilterStr = (obj, user) => {
         sqlStr += addIdFilter(id);
     sqlStr += ` AND (sexual_preference = '${
         user.gender
-    }' OR sexual_preference = both)`
+    }' OR sexual_preference = 'both')`
     return sqlStr;
 }
 
