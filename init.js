@@ -4,35 +4,43 @@ const bcrypt = require('bcrypt');
 
 require('dotenv').config();
 let data = JSON.parse(fs.readFileSync('users.json'));
+// let intersts = JSON.parse(fs.readFileSync('interests.json'));
+// let interests = intersts['hobbies'];;
 
-// let i = ['chess', 'draught', 'swimming', 'hiking', 'running', 'running away', 'chasing', 'checkers', 'football', 'kamasutra', 'manga', 'anime', 'culture', 'it', 'cricket', 'gyming', 'fitness', 'rugby', 'youtube', 'reddit', 'facebook', 'selfies', 'mindgames', 'poledance', 'dance', 'tennis', 'programming', 'torrenting', 'throwing', 'limping', 'chasing Carl with a cane', 'jogging', 'student', 'flying', 'unemployed', 'need money', 'for hire', 'on sale', 'discount price', 'clearance sale', 'month to live']
 // function generateInterests(){
 //     let data = [];
-//     for (let j = 0; j < 10 ; j++){
-//         let p =Math.floor(Math.random() * (i.length - 1));
-//         let interest = i[p];
-//         if (!data.includes(interest))
-//             data.push(interest)
+//     for (let j = 0; j < 20 ; j++){
+//         let p =Math.floor(Math.random() * (interests.length - 1));
+//         let i = interests[p];
+//         if (!data.includes(i))
+//             data.push(i)
 //     }
 //     return data;
 // }
 
+
+
 //     data.forEach(async (element) => {
-//         element['location'] = [element.longitude, element.latitude];
+//         element.profile_picture = "https://picsum.photos/320/480";
+//         element.images = ["https://picsum.photos/320/480", "https://picsum.photos/320/480", "https://picsum.photos/320/480","https://picsum.photos/320/480","https://picsum.photos/320/480"]
 //         element.interests = generateInterests();
-//         delete element.longitude;
-//         delete element.latitude;
+//         element.authenticated = true;
+//         element.suspended = false;
 //     });
+
+//     console.log(data[1])
 
 
 // fs.writeFileSync('users.json', JSON.stringify(data));
 module.exports = async function insertDummyProfiles() {
-    const salt = await bcrypt.genSalt(10);
-    const hash = await bcrypt.hash(process.env.PG_PASSWORD, salt);
+//     const salt = await bcrypt.genSalt(10);
+//     const hash = await bcrypt.hash(process.env.PG_PASSWORD, salt);
 
-    await db.any('INSERT INTO public."Admin" (id, username, password) VALUES ($1, $2, $3) RETURNING id', [
-        process.env.ADMIN_ID, process.env.PG_USERNAME, hash
-    ],).then().catch(err => console.log(err));
+    await db.any('DELETE FROM public."Profile" WHERE id <= 1000');
+
+    // await db.any('INSERT INTO public."Admin" (id, username, password) VALUES ($1, $2, $3) RETURNING id', [
+    //     process.env.ADMIN_ID, process.env.PG_USERNAME, hash
+    // ],).then().catch(err => console.log(err));
 
     cs = new pgp.helpers.ColumnSet([
         'profile_picture',

@@ -45,8 +45,8 @@ class Like {
                     // console.log(likeback);
                     if (likeback && likeback.length > 0) {
                         const mat = (await match.createMatch({user1: liked_user, user2: liking_user, date}));
-                        await emitNotification(liked_user, createNotification('match', liked_user, liking_user, null));
-                        await emitNotification(liking_user, createNotification('match', liking_user, liked_user, null));
+                        await emitNotification(liked_user, createNotification('match', liked_user, liking_user, "You have been matched"));
+                        await emitNotification(liking_user, createNotification('match', liking_user, liked_user, "You have been matched"));
 
                         await profile.updatePopularity(liked_user, 5);
                         if (mat) 
@@ -114,7 +114,7 @@ class Like {
                 return deleteByValue("Like", "id", id).then(data => {
                     getBy("id", id, "Like").then(data => {
                         emitNotification(data[0]['liked_user'] , createNotification(
-                            'unlike', data[0]['liking_user'], data[0]['liked_user'], null));
+                            'unlike', data[0]['liking_user'], data[0]['liked_user'], 'Someone has unliked you'));
                     });
                     return res.send({success :true, message : `Like id : ${id} deleted`});
                 });

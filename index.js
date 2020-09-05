@@ -56,7 +56,7 @@ mongoose.connect(process.env.MONGO_URL, {
 }).then(async () => {
     // await db.any(new QueryFile('matcha.pgsql'));
     // Token.collection.drop();
-    // await insertUserProfiles();
+    await insertUserProfiles();
 
     await server.listen(PORT, () => {
         console.log(`Server is running on port ${PORT}.`);
