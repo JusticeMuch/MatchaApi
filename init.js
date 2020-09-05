@@ -59,7 +59,9 @@ module.exports = async function insertDummyProfiles() {
         'location',
         'popularity',
         'gender',
-        'authenticated'
+        'authenticated',
+        'suspended',
+        'images'
     ], {
         table: {
             schema: 'public',
