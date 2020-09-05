@@ -13,7 +13,8 @@ const {
     deleteProfile,
     getProfileFromMatches,
     getProfilesFromLiked,
-    getProfilesFromLikes
+    getProfilesFromLikes,
+    getProfilesFromVisits
 } = require('../controllers/profile');
 const filterProfiles = require('../controllers/filter');
 require('dotenv').config();
@@ -32,5 +33,6 @@ router.delete('/', deleteProfile);
 router.get('/match', getProfileFromMatches);
 router.get('/liked', getProfilesFromLiked);
 router.get('/likes', getProfilesFromLikes);
+router.get('/visits', getProfilesFromVisits);
 
 module.exports = router;

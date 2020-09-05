@@ -402,6 +402,24 @@ const getProfilesFromLikes = async (req, res) => {
     }
 }
 
+const getProfilesFromVisits = async (req, res) => {
+    const user = req.user._id;
+
+    try {
+        return db.any(`SELECT * FROM public."Profile" WHERE id =(SELECT liking_user FROM public."Visit" WHERE visited = ${user});` ).then(
+            async (data) => {
+                console.log(user);
+                console.log(data);
+                if (data && data.length > 0)
+                    await data.forEach(element => delete element.password);
+                return await res.send({success : true, data : data});
+            }
+        )
+    } catch (error) {
+        return res.status(400).send({success : false, Error : {message : error.message}});
+    }
+}
+
 const getProfilesFromLiked = async (req, res) => {
     const user = req.user._id;
 
@@ -458,5 +476,6 @@ module.exports = {
     deleteProfile,
     getProfilesFromLikes,
     getProfilesFromLiked,
-    getProfileFromMatches
+    getProfileFromMatches,
+    getProfilesFromVisits
 }

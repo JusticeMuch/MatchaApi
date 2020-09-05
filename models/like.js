@@ -111,7 +111,7 @@ class Like {
 
         if (id && id != undefined){
             try {
-                return deleteByValue("Like", "id", id).then(data => {
+                return deleteByValue("Like", "id", id).then(data => {               
                     getBy("id", id, "Like").then(data => {
                         emitNotification(data[0]['liked_user'] , createNotification(
                             'unlike', data[0]['liking_user'], data[0]['liked_user'], 'Someone has unliked you'));
