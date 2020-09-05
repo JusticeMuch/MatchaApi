@@ -406,7 +406,7 @@ const getProfilesFromVisits = async (req, res) => {
     const user = req.user._id;
 
     try {
-        return db.any(`SELECT * FROM public."Profile" WHERE id =(SELECT liking_user FROM public."Visit" WHERE visited = ${user});` ).then(
+        return db.any(`SELECT * FROM public."Profile" WHERE id =(SELECT visitor FROM public."Visit" WHERE visited = ${user});` ).then(
             async (data) => {
                 console.log(user);
                 console.log(data);
