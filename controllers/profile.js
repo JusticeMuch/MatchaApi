@@ -316,7 +316,7 @@ const deleteImage = async (req, res) => {
         return data[0].images
     });
     const len = (await images).length;
-    const imageGETsFiltered = (await images).filter((value) => value != image);
+    const imagesFiltered = (await images).filter((value) => value != image);
     if (imagesFiltered.length == len) 
         return res.status(400).send({success: false, Error: {message :"Photo url sent is not in db as such it cant be deleted"}});
      else {
