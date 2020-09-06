@@ -141,15 +141,15 @@ const getMessageById = async (req,res) => {
 }
 
 const getLikeMatch = async (req, res) => {
-    const {liking_user} = req.query;
-    const {liked_user} = req.user._id;
+    const {liked_user} = req.query;
+    const {liking_user} = req.user._id;
 
-    if (!liking_user || liking_user == undefined)
-        return res.status(400).send({success : false, Error : {message : "liking user field is empty or undefined"}});
+    if (!liked_user || liked_user == undefined)
+        return res.status(400).send({success : false, Error : {message : "liked user field is empty or undefined"}});
 
     try {
         let results = {};
-        
+
         await like.getLike(liking_user, liked_user).then(async (likeData) => {
             
             if (likeData && likeData != undefined && likeData.length > 0){
