@@ -31,11 +31,7 @@ class Match {
         try {
             return await db.any(`SELECT id, date FROM public."Match" WHERE (user1 = $1 AND user2 = $2) OR (user1 = $2 AND user2 = $1)`
             , [user1, user2]).then(async (data) => {
-                if (!data || data.length == 0) 
-                    return null
-                 else 
                     return data;
-                
             })
         } catch (err) {
             console.log('Error in model Match.getMatch()');

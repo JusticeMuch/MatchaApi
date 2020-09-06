@@ -18,11 +18,7 @@ class Like {
     async getLike(liking_user, liked_user) {
         try {
             return await db.any(`SELECT id, date FROM public."Like" WHERE liked_user = $1 AND liking_user = $2`, [liked_user, liking_user]).then(async (data) => {
-                if (data.length == 0) 
-                    return null
-                 else 
                     return data;
-                
             })
         } catch (err) {
             console.log('Error in model Like.getLike()');
