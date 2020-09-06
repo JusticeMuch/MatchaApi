@@ -16,8 +16,6 @@ const {getBy} = require('../middleware/generic_methods');
 class Like {
 
     async getLike(liking_user, liked_user) {
-        console.log("liking_user : " , liking_user);
-        console.log("liked_user : " , liked_user);
         try {
             return await db.any('SELECT * FROM public."Like" WHERE liked_user = $1 AND liking_user = $2;', [liked_user, liking_user]).then(async (data) => {
                     return data;
@@ -34,7 +32,6 @@ class Like {
             return await db.any('INSERT INTO public."Like" (liked_user, liking_user, date) VALUES ($1, $2, $3) RETURNING id', [
                 liked_user, liking_user, date
             ],).then(async (data) => {
-                console.log(data);
                 if (!data && data.length == 0) 
                     return await res.status(400).send({success: false, message: `like not created`, like_id: null});
                  else {

@@ -56,7 +56,6 @@ const validateToken = (req, res) => {
     return Token.findOne({
         token: req.params.token
     }, async (err, token) => {
-        console.log(token._userId);
         if (!token) 
             return res.status(400).send({success: false, error: 'We were unable to find a valid token. Your token may have expired.'});
         
@@ -144,11 +143,9 @@ const login = async (req, res) => {
     
 
     const {email, password} = req.body;
-    console.log(email)
 
     return await getFiltered("Profile", "email", email, "authenticated, password, suspended, id").then(async (data) => {
         const valid = await bcrypt.compare(password, data[0].password);
-        console.log(data);
         if (data.length == 0 || !data) 
             return res.status(400).send({success: false, Error: {message : "No such user is on system"}});
          else if (!data[0].authenticated)
