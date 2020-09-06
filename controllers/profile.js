@@ -310,7 +310,10 @@ const deleteImage = async (req, res) => {
     if (!image || image == undefined) 
         return res.status(400).send({success: false, Error: "Field 'image' is blank"});
     
-    let images = await getFiltered("Profile", "id", id, "images").then(data => {
+    let images = await getFiltered("Profile", "id", id, "images, profile_picture").then(async data => {
+        if (data[0]['profile_picture'] == image)
+            await updateById("Profile", id, {profile_picture: ''});
+        
         return data[0].images
     });
     const len = (await images).length;
