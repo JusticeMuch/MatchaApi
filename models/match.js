@@ -79,7 +79,7 @@ class Match {
 
         if (id && id != undefined){
             try {
-                return deleteByValue("Match", "id", id).then(data => {
+                return deleteByValue("Match", "id", id).then(async (data) => {
                     await db.any(`DELETE FROM public."Like" WHERE liked_user = $1 AND liking_user = $2`, [data[0].user1, data[0].user2]);
                     await db.any(`DELETE FROM public."Like" WHERE liked_user = $2 AND liking_user = $1`, [data[0].user1, data[0].user2]);
                     await res.send({success :true, message : `Match id : ${id} deleted`});
