@@ -16,8 +16,10 @@ const {getBy} = require('../middleware/generic_methods');
 class Like {
 
     async getLike(liking_user, liked_user) {
+        console.log("liking_user : " , liking_user);
+        console.log("liked_user : " , liked_user);
         try {
-            return await db.any(`SELECT id, date FROM public."Like" WHERE liked_user = $1 AND liking_user = $2`, [liked_user, liking_user]).then(async (data) => {
+            return await db.any('SELECT * FROM public."Like" WHERE liked_user = $1 AND liking_user = $2;', [liked_user, liking_user]).then(async (data) => {
                     return data;
             })
         } catch (err) {

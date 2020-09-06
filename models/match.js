@@ -29,7 +29,7 @@ class Match {
 
     async getMatch(user1, user2) {
         try {
-            return await db.any(`SELECT id, date FROM public."Match" WHERE (user1 = $1 AND user2 = $2) OR (user1 = $2 AND user2 = $1)`
+            return await db.any('SELECT * FROM public."Match" WHERE (user1 = $1 AND user2 = $2) OR (user1 = $2 AND user2 = $1);'
             , [user1, user2]).then(async (data) => {
                     return data;
             })
