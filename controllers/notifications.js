@@ -148,7 +148,7 @@ const getLikeMatch = async (req, res) => {
         return res.status(400).send({success : false, Error : {message : "liking user field is empty or undefined"}});
 
     try {
-        await like.getLike(liking_user, liked_user).then(likeData => {
+        await like.getLike(liking_user, liked_user).then(async (likeData) => {
             let results = {};
             if (likeData && likeData != undefined && likeData.length > 0){
                 results['date'] = likeData[0]['date'];
