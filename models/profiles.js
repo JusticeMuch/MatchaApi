@@ -20,7 +20,8 @@ class Profile {
         "popularity",
         "birthdate",
         "sexual_orientation",
-        "sexual_preference"
+        "sexual_preference",
+        "profile_picture"
     ]
 
     async createProfile(req, res, object) {
