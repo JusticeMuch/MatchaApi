@@ -140,6 +140,33 @@ const getMessageById = async (req,res) => {
     }
 }
 
+const getLikeMatch = async (req, res) => {
+    const {liking_user} = req.query;
+    const {liked_user} = req.user._id;
+
+    if (!liking_user || liking_user == undefined)
+        return res.status(400).send({success : false, Error : {message : "liking user field is empty or undefined"}});
+
+    try {
+        await like.getLike(liking_user, liked_user).then(likeData => {
+            let results = {};
+            if (likeData && likeData != undefined && likeData.length > 0){
+                results['date'] = likeData[0]['date'];
+                results['like_id'] = likeData[0]['id'];
+            }
+            await match.getMatch(liking_user, liked_user).then(matchData => {
+                if (matchData && matchData != undefined && matchData.length > 0){
+                    results['date'] = likeData[0]['date'];
+                    results['match_id'] = likeData[0]['id'];
+                }
+            })
+        });
+        return res.send({success : false, data : results});
+    } catch (error) {
+        return res.status(400).send({success :false, Error : {message : error.message}});
+    }
+}
+
 const messageGet = message.getMessages;
 const likesGet = like.getLikes;
 const visitsGet = visit.getVisits;
@@ -173,5 +200,6 @@ module.exports = {
     likeDelete,
     matchDelete,
     messageDelete,
-    getLiked
+    getLiked,
+    getLikeMatch
 }
