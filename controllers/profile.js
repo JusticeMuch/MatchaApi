@@ -43,7 +43,8 @@ const schemaUpdate = Joi.object({
     popularity: Joi.number(),
     birthdate: Joi.date(),
     sexual_preference: Joi.string(),
-    sexual_orientation: Joi.string()
+    sexual_orientation: Joi.string(),
+    profile_picture : Joi.string(),
 })
 
 const validateToken = (req, res) => {
@@ -421,7 +422,7 @@ const getProfilesFromLiked = async (req, res) => {
     const user = req.user._id;
 
     try {
-        return db.any(`SELECT * FROM public."Profile" WHERE id =(SELECT liked_user FROM public."Like" WHERE liking_user = ${user})` ).then(
+        return db.any(`SELECT * FROM public."Profile" WHERE id =(SELECT liked_user FROM public."Like" WHERE liking_user = ${user});` ).then(
             async (data) => {
                 console.log(user);
                 console.log(data);
