@@ -157,8 +157,8 @@ const getLikeMatch = async (req, res) => {
             }
             await match.getMatch(liking_user, liked_user).then(matchData => {
                 if (matchData && matchData != undefined && matchData.length > 0){
-                    results['date'] = likeData[0]['date'];
-                    results['match_id'] = likeData[0]['id'];
+                    results['date'] = matchData[0]['date'];
+                    results['match_id'] = matchData[0]['id'];
                 }
             })
         });
