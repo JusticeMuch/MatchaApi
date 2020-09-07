@@ -82,10 +82,10 @@ class Match {
                     return res.send({success :true, message : `Match id : ${id} deleted`});
                 });
             } catch (error) {
-                res.status(400).send({success : false, Error : {message : error.message}});
+                return res.status(400).send({success : false, Error : {message : error.message}});
             }
         }else{
-            res.status(400).send({success: false, Error : {message : "Id field is empty" }})
+            return res.status(400).send({success: false, Error : {message : "Id field is empty" }})
         }
     }
 }
