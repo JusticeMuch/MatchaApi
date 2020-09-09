@@ -33,7 +33,7 @@ class Profile {
             email
         } = object;
         try {
-            return await db.any('INSERT INTO public."Profile" (firstname, lastname, username, password, email) VALUES ($1, $2, $3, $4, $5) RETURNING id', [
+            return await db.any('INSERT INTO public."Profile" (firstname, lastname, username, password, email, popularity) VALUES ($1, $2, $3, $4, $5, 0) RETURNING id', [
                 firstname,
                 lastname,
                 username,
