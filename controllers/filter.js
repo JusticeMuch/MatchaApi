@@ -46,7 +46,8 @@ const filterBlocked = async (userId, data) => {
         blockedData = await block.getBlock(userId);
         if (blockedData && blockedData != undefined) {
             let blockedUsers = await blockedData.map({blocked_user} = blocked_user);
-            return await data.filter((e) => blocked_user.includes(e.id));
+
+            return await data.filter((e) => {delete e.password; return blocked_user.includes(e.id);});
         }
         return data;
     } catch (error) {
