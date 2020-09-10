@@ -43,13 +43,16 @@ const filterLocation = (radius, data, userLoc) => {
 
 const filterBlocked = async (userId, data) => {
     try {
+        let res = [];
         blockedData = await block.getBlock(userId);
         if (blockedData && blockedData != undefined) {
-            let blockedUsers = await blockedData.map({blocked_user} = blocked_user);
-            console.log(blockedUsers);
-            return await data.filter((e) => (!blockedUsers.includes(e.id)));
+            data.forEach(element => {
+                delete element.password;
+                if (!(blockedData.filter(e => e.blocked_user == element.id).length > 0))
+                    res.push(element);
+            });
         }
-        return data;
+        return res;
     } catch (error) {
         console.log(error);
         return Error(error);
