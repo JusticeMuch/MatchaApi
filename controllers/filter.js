@@ -53,7 +53,7 @@ const filterBlocked = async (userId, data) => {
             });
             return res;
         }else{
-            return data;
+            return data.forEach(e => delete e.password);
         }
         
     } catch (error) {
