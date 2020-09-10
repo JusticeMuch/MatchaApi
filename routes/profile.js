@@ -14,7 +14,8 @@ const {
     getProfileFromMatches,
     getProfilesFromLiked,
     getProfilesFromLikes,
-    getProfilesFromVisits
+    getProfilesFromVisits,
+    getProfilesFromBlocked
 } = require('../controllers/profile');
 const filterProfiles = require('../controllers/filter');
 require('dotenv').config();
@@ -34,5 +35,6 @@ router.get('/match', getProfileFromMatches);
 router.get('/liked', getProfilesFromLiked);
 router.get('/likes', getProfilesFromLikes);
 router.get('/visits', getProfilesFromVisits);
+router.get('/blocks', getProfilesFromBlocked);
 
 module.exports = router;
