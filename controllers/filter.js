@@ -45,7 +45,7 @@ const filterBlocked = async (userId, data) => {
     try {
         let res = [];
         blockedData = await block.getBlock(userId);
-        if (blockedData && blockedData != undefined) {
+        if (blockedData && blockedData != {} && blockedData != undefined) {
             data.forEach(element => {
                 delete element.password;
                 if (!(blockedData.filter(e => e.blocked_user == element.id).length > 0))
