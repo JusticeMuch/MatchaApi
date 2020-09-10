@@ -137,7 +137,7 @@ module.exports = filterProfiles = async (req, res) => {
         return data;
     });
 
-    console.log(profiles);
+    
 
     if (radius && radius != undefined) 
         profiles = filterLocation(radius, profiles, userData.location);
@@ -148,7 +148,7 @@ module.exports = filterProfiles = async (req, res) => {
         profiles = await filterInterests(interests, profiles);
     
 
-
+    await console.log(profiles);
     profiles = await filterBlocked(req.user._id, profiles);
 
     res.status(200).send({success: true, data: profiles, message: " Profiles filtered successfully"});
