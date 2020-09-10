@@ -137,7 +137,7 @@ module.exports = filterProfiles = async (req, res) => {
         return data;
     });
 
-    if (radius && radius != undefined) 
+    if (radius && radius != undefined && userData.location && userData.location.length > 0) 
         profiles = await filterLocation(radius, profiles, userData.location);
     
 
