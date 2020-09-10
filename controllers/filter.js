@@ -52,6 +52,7 @@ const filterBlocked = async (userId, data) => {
                     res.push(element);
             });
         }
+        await console.log(res);
         return res;
     } catch (error) {
         console.log(error);
@@ -148,7 +149,7 @@ module.exports = filterProfiles = async (req, res) => {
         profiles = await filterInterests(interests, profiles);
     
 
-    await console.log(profiles);
+    
     profiles = await filterBlocked(req.user._id, profiles);
 
     res.status(200).send({success: true, data: profiles, message: " Profiles filtered successfully"});
