@@ -389,7 +389,7 @@ const getProfilesFromLikes = async (req, res) => {
     const user = req.user._id;
 
     try {
-        return db.any(`SELECT * FROM public."Profile" WHERE id =(SELECT liking_user FROM public."Like" WHERE liked_user = ${user});` ).then(
+        return db.any(`SELECT * FROM public."Profile" WHERE IN (SELECT liking_user FROM public."Like" WHERE liked_user = ${user});` ).then(
             async (data) => {
                 console.log(user);
                 console.log(data);
@@ -407,7 +407,7 @@ const getProfilesFromVisits = async (req, res) => {
     const user = req.user._id;
 
     try {
-        return db.any(`SELECT * FROM public."Profile" WHERE id =(SELECT visitor FROM public."Visit" WHERE visited = ${user});` ).then(
+        return db.any(`SELECT * FROM public."Profile" WHERE IN (SELECT visitor FROM public."Visit" WHERE visited = ${user});` ).then(
             async (data) => {
                 console.log(user);
                 console.log(data);
@@ -425,7 +425,7 @@ const getProfilesFromLiked = async (req, res) => {
     const user = req.user._id;
 
     try {
-        return db.any(`SELECT * FROM public."Profile" WHERE id =(SELECT liked_user FROM public."Like" WHERE liking_user = ${user});` ).then(
+        return db.any(`SELECT * FROM public."Profile" WHERE IN (SELECT liked_user FROM public."Like" WHERE liking_user = ${user});` ).then(
             async (data) => {
                 console.log(user);
                 console.log(data);
@@ -443,7 +443,7 @@ const getProfilesFromBlocked = async (req, res) => {
     const user = req.user._id;
 
     try {
-        return db.any(`SELECT * FROM public."Profile" WHERE id =(SELECT blocked_user FROM public."Block" WHERE blocking_user = ${user});` ).then(
+        return db.any(`SELECT * FROM public."Profile" WHERE id IN (SELECT blocked_user FROM public."Block" WHERE blocking_user = ${user});` ).then(
             async (data) => {
                 console.log(user);
                 console.log(data);
@@ -461,7 +461,7 @@ const getProfileFromMatches = async (req, res) => {
     const user = req.user._id;
 
     try {
-        return db.any(`SELECT * FROM public."Profile" WHERE id = (SELECT user1 FROM public."Match" WHERE user2 = ${user} UNION SELECT user2 FROM public."Match" WHERE user1 = ${user})` ).then(
+        return db.any(`SELECT * FROM public."Profile" WHERE id IN (SELECT user1 FROM public."Match" WHERE user2 = ${user} UNION SELECT user2 FROM public."Match" WHERE user1 = ${user})` ).then(
             async (data) => {
                 if (data && data.length > 0)
                     await data.forEach(element => delete element.password);
