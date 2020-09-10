@@ -389,7 +389,7 @@ const getProfilesFromLikes = async (req, res) => {
     const user = req.user._id;
 
     try {
-        return db.any(`SELECT * FROM public."Profile" WHERE IN (SELECT liking_user FROM public."Like" WHERE liked_user = ${user});` ).then(
+        return db.any(`SELECT * FROM public."Profile" WHERE id IN (SELECT liking_user FROM public."Like" WHERE liked_user = ${user});` ).then(
             async (data) => {
                 console.log(user);
                 console.log(data);
@@ -407,7 +407,7 @@ const getProfilesFromVisits = async (req, res) => {
     const user = req.user._id;
 
     try {
-        return db.any(`SELECT * FROM public."Profile" WHERE IN (SELECT visitor FROM public."Visit" WHERE visited = ${user});` ).then(
+        return db.any(`SELECT * FROM public."Profile" WHERE id IN (SELECT visitor FROM public."Visit" WHERE visited = ${user});` ).then(
             async (data) => {
                 console.log(user);
                 console.log(data);
@@ -425,7 +425,7 @@ const getProfilesFromLiked = async (req, res) => {
     const user = req.user._id;
 
     try {
-        return db.any(`SELECT * FROM public."Profile" WHERE IN (SELECT liked_user FROM public."Like" WHERE liking_user = ${user});` ).then(
+        return db.any(`SELECT * FROM public."Profile" WHERE id IN (SELECT liked_user FROM public."Like" WHERE liking_user = ${user});` ).then(
             async (data) => {
                 console.log(user);
                 console.log(data);
